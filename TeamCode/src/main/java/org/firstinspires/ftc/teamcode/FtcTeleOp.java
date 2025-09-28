@@ -1,4 +1,6 @@
 package org.firstinspires.ftc.teamcode;
+import static org.firstinspires.ftc.teamcode.RobotState.currentPose;
+
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
@@ -11,13 +13,29 @@ import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.subsystems.Shooter;
+import org.firstinspires.ftc.teamcode.subsystems.Turret;
+import org.firstinspires.ftc.teamcode.subsystems.Vision;
+
 import java.util.function.Supplier;
+
+import dev.nextftc.core.components.SubsystemComponent;
+import dev.nextftc.ftc.NextFTCOpMode;
 
 @Configurable
 @TeleOp
-public class FtcTeleOp extends OpMode {
+public class FtcTeleOp extends NextFTCOpMode {
+    private final Vision vision = new Vision(hardwareMap);
+    private final Intake intake = new Intake();
+    private final Shooter shooter = new Shooter();
+    private final Turret turret = new Turret();
+
+    {addComponents(new SubsystemComponent(vision),
+            new SubsystemComponent(intake),
+            new SubsystemComponent(shooter),
+            new SubsystemComponent(turret));}
     private Follower follower;
-    public static Pose startingPose;
     private boolean automatedDrive;
     private Supplier<PathChain> pathChain;
     private TelemetryManager telemetryM;
@@ -25,9 +43,9 @@ public class FtcTeleOp extends OpMode {
     private double slowModeMultiplier = 0.5;
 
     @Override
-    public void init() {
-        follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(startingPose == null ? new Pose() : startingPose);
+    public void onInit() {
+        follower = Constants.createFollower(hardwareMap, vision::getCurrPose);
+        follower.setStartingPose(currentPose == null ? new Pose() : currentPose); // Take leftover pose from auto
         follower.update();
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
 
@@ -38,12 +56,12 @@ public class FtcTeleOp extends OpMode {
     }
 
     @Override
-    public void start() {
+    public void onStartButtonPressed() {
         follower.startTeleopDrive(true);
     }
 
     @Override
-    public void loop() {
+    public void onUpdate() {
         //Call this once per loop
         follower.update();
         telemetryM.update();
