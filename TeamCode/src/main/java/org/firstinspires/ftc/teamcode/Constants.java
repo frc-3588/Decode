@@ -22,10 +22,10 @@ public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants();
     public static MecanumConstants driveConstants = new MecanumConstants()
             .maxPower(1)
-            .rightFrontMotorName("rf")
-            .rightRearMotorName("rr")
-            .leftRearMotorName("lr")
-            .leftFrontMotorName("lf")
+            .rightFrontMotorName("fr")
+            .rightRearMotorName("br")
+            .leftRearMotorName("bl")
+            .leftFrontMotorName("fl")
             .leftFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
             .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
             .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
@@ -38,6 +38,10 @@ public class Constants {
                 .mecanumDrivetrain(driveConstants)
                 .setLocalizer(new FusedAprilTagLocalizer(hardwareMap, localizerConstants, AutoConstants.startPose, visionPoseSupplier))
                 .build();
+    }
+
+    public static Follower createFollower(HardwareMap hardwareMap) {
+        return createFollower(hardwareMap, () -> null);
     }
 
     public static PinpointConstants localizerConstants = new PinpointConstants()

@@ -5,13 +5,17 @@ import static org.firstinspires.ftc.teamcode.RobotState.currentPose;
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
+import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.HeadingInterpolator;
 import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
+import com.qualcomm.hardware.rev.Rev9AxisImu;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.IMU;
 
+import org.firstinspires.ftc.teamcode.subsystems.Indicators;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.subsystems.Turret;
@@ -32,46 +36,57 @@ import static dev.nextftc.extensions.pedro.PedroComponent.follower;
 @Configurable
 @TeleOp
 public class FtcTeleOp extends NextFTCOpMode {
-    private final Vision vision = new Vision(hardwareMap);
-    private final Intake intake = new Intake();
-    private final Shooter shooter = new Shooter();
-    private final Turret turret = new Turret();
+    private Vision vision;
+    private Intake intake;
+    private Shooter shooter;
+    private Turret turret;
+    private Indicators indicators;
 
-    {
-        addComponents(
-                new PedroComponent(hardwareMap1 -> Constants.createFollower(hardwareMap, vision::getCurrPose)),
-                new SubsystemComponent(vision),
-                new SubsystemComponent(intake),
-                new SubsystemComponent(shooter),
-                new SubsystemComponent(turret));
-    }
 
     private boolean automatedDrive;
     private Supplier<PathChain> pathChain;
     private TelemetryManager telemetryM;
     private boolean slowMode = false;
     private final double slowModeMultiplier = 0.5;
-    Button gamepad1a = button(() -> gamepad1.a);
+    Button gamepad1a = button(() -> gamepad1.cross);
     Button gamepad1rightBumper = button(() -> gamepad1.right_bumper);
-    Button gamepad1B = button(()-> gamepad1.b);
+    Button gamepad1B = button(()-> gamepad1.circle);
+    Button gamepad1X = button(()-> gamepad1.triangle);
 
+    Follower follower;
 
 
     @Override
     public void onInit() {
-        follower().setStartingPose(currentPose == null ? new Pose() : currentPose); // Take leftover pose from auto
-        follower().update();
+        vision = new Vision(hardwareMap);
+        intake = new Intake();
+        shooter = new Shooter();
+        turret = new Turret();
+
+        indicators = new Indicators(hardwareMap);
+
+        addComponents(
+                new SubsystemComponent(vision),
+                new SubsystemComponent(intake),
+                new SubsystemComponent(shooter),
+                new SubsystemComponent(indicators),
+                new SubsystemComponent(turret));
+
+        follower = Constants.createFollower(hardwareMap);
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
 
-        pathChain = () -> follower().pathBuilder() //Lazy Curve Generation
-                .addPath(new Path(new BezierLine(follower()::getPose, new Pose(45, 98))))
-                .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower()::getHeading, Math.toRadians(45), 0.8))
+        follower.setStartingPose(currentPose == null ? new Pose() : currentPose); // Take leftover pose from auto
+        follower.update();
+
+        pathChain = () -> follower.pathBuilder() //Lazy Curve Generation
+                .addPath(new Path(new BezierLine(follower::getPose, new Pose(45, 98))))
+                .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, Math.toRadians(45), 0.8))
                 .build();
         configureBindings();
     }
 
     private void configureBindings(){
-        // Follow sample automated path on a
+        // Follow sample automated path on A button
         gamepad1a.whenBecomesTrue(() -> {
             new FollowPath(pathChain.get());
             automatedDrive = true;
@@ -84,21 +99,23 @@ public class FtcTeleOp extends NextFTCOpMode {
 
         // Cancel auto path when B is pressed
         gamepad1B
-                .and(()-> !follower().isBusy())
+                .and(()-> !follower.isBusy())
                 .whenBecomesTrue(()->{
-                    follower().startTeleopDrive();
+                    follower.startTeleopDrive();
                     automatedDrive = false;
                 });
+        gamepad1X.whenBecomesTrue(indicators::setColorRed);
     }
     @Override
     public void onStartButtonPressed() {
-        follower().startTeleopDrive(true);
+        follower.startTeleopDrive(true);
     }
 
     @Override
     public void onUpdate() {
         //Call this once per loop
         telemetryM.update();
+        follower.update();
         BindingManager.update();
 
         if (!automatedDrive) {
@@ -106,7 +123,7 @@ public class FtcTeleOp extends NextFTCOpMode {
             //In case the drivers want to use a "slowMode" you can scale the vectors
 
             //This is the normal version to use in the TeleOp
-            if (!slowMode) follower().setTeleOpDrive(
+            if (!slowMode) follower.setTeleOpDrive(
                     -gamepad1.left_stick_y,
                     -gamepad1.left_stick_x,
                     -gamepad1.right_stick_x,
@@ -114,7 +131,7 @@ public class FtcTeleOp extends NextFTCOpMode {
             );
 
                 //This is how it looks with slowMode on
-            else follower().setTeleOpDrive(
+            else follower.setTeleOpDrive(
                     -gamepad1.left_stick_y * slowModeMultiplier,
                     -gamepad1.left_stick_x * slowModeMultiplier,
                     -gamepad1.right_stick_x * slowModeMultiplier,
@@ -123,14 +140,14 @@ public class FtcTeleOp extends NextFTCOpMode {
         }
 
         //Stop automated following if the follower is done
-        if (automatedDrive && !follower().isBusy()) {
-            follower().startTeleopDrive();
+        if (automatedDrive && !follower.isBusy()) {
+            follower.startTeleopDrive();
             automatedDrive = false;
         }
 
 
-        telemetryM.debug("position", follower().getPose());
-        telemetryM.debug("velocity", follower().getVelocity());
+        telemetryM.debug("position", follower.getPose());
+        telemetryM.debug("velocity", follower.getVelocity());
         telemetryM.debug("automatedDrive", automatedDrive);
     }
 
@@ -140,3 +157,7 @@ public class FtcTeleOp extends NextFTCOpMode {
     }
 
 }
+//Path Diagram for each of the classes and explain the sensor associated with the class,
+// the library's needed, the variables in the class, the overall function of the class to just make the robot drive.
+
+

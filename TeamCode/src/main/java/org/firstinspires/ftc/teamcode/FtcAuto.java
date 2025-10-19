@@ -13,6 +13,7 @@ import static org.firstinspires.ftc.teamcode.utils.Paths.scorePreload;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.teamcode.subsystems.Indicators;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.subsystems.Turret;
@@ -31,6 +32,7 @@ public class FtcAuto extends NextFTCOpMode {
     private final Intake intake = new Intake();
     private final Shooter shooter = new Shooter();
     private final Turret turret = new Turret();
+    private final Indicators indicators = new Indicators(hardwareMap);
 
     {
         addComponents(
@@ -38,6 +40,7 @@ public class FtcAuto extends NextFTCOpMode {
                 new SubsystemComponent(vision),
                 new SubsystemComponent(intake),
                 new SubsystemComponent(shooter),
+                new SubsystemComponent(indicators),
                 new SubsystemComponent(turret));
     }
 
