@@ -5,14 +5,10 @@ import static org.firstinspires.ftc.teamcode.Constants.visionPastSamples;
 import static org.firstinspires.ftc.teamcode.Constants.visionSensorVariance;
 
 import com.ThermalEquilibrium.homeostasis.Filters.FilterAlgorithms.KalmanFilter;
-import com.pedropathing.ftc.PoseConverter;
 import com.pedropathing.ftc.localization.constants.PinpointConstants;
 import com.pedropathing.ftc.localization.localizers.PinpointLocalizer;
-import com.pedropathing.geometry.PedroCoordinates;
 import com.pedropathing.geometry.Pose;
-import com.pedropathing.localization.Localizer;
-import com.pedropathing.math.Vector;
-import com.qualcomm.hardware.limelightvision.Limelight3A;
+
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Supplier;
@@ -20,9 +16,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 
 
 public class FusedAprilTagLocalizer extends PinpointLocalizer {
-    Supplier<Pose3D> visionPoseSupplier;
+    Supplier<Pose> visionPoseSupplier;
     KalmanFilter kalmanFilter;
-    public FusedAprilTagLocalizer(HardwareMap map, PinpointConstants constants, Pose setStartPose, Supplier<Pose3D> visionPoseSupplier) {
+    public FusedAprilTagLocalizer(HardwareMap map, PinpointConstants constants, Pose setStartPose, Supplier<Pose> visionPoseSupplier) {
         super(map, constants, setStartPose);
         this.visionPoseSupplier = visionPoseSupplier;
         kalmanFilter = new KalmanFilter(visionModelVariance, visionSensorVariance, visionPastSamples);
@@ -33,9 +29,8 @@ public class FusedAprilTagLocalizer extends PinpointLocalizer {
         super.update();
 
         if (visionPoseSupplier.get() != null){
-            Pose3D pose = visionPoseSupplier.get();
             // Eventually add in the kalman filter here
-            super.setPose(new Pose(pose.getPosition().x, pose.getPosition().y, pose.getOrientation().getYaw()));
+            super.setPose(visionPoseSupplier.get());
         }
     }
 

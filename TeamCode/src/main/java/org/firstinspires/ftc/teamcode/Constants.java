@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficients;
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.follower.FollowerConstants;
@@ -32,7 +33,7 @@ public class Constants {
             .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD);
     public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);
 
-    public static Follower createFollower(HardwareMap hardwareMap, Supplier<Pose3D> visionPoseSupplier) {
+    public static Follower createFollower(HardwareMap hardwareMap, Supplier<Pose> visionPoseSupplier) {
         return new FollowerBuilder(followerConstants, hardwareMap)
                 .pathConstraints(pathConstraints)
                 .mecanumDrivetrain(driveConstants)
@@ -65,4 +66,7 @@ public class Constants {
         public static Pose pickup2Pose = new Pose(43, 130, Math.toRadians(0)); // Middle (Second Set) of Artifacts from the Spike Mark.
         public static Pose pickup3Pose = new Pose(49, 135, Math.toRadians(0)); // Lowest (Third Set) of Artifacts from the Spike Mark.
     }
+
+    public static PIDCoefficients aimGoalCoefficients = new PIDCoefficients(0,0,0);
+    public static double aimGoalThresholdDegrees = 3.0;
 }

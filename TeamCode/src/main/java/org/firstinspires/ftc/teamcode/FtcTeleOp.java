@@ -20,6 +20,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.subsystems.Turret;
 import org.firstinspires.ftc.teamcode.subsystems.Vision;
+import org.firstinspires.ftc.teamcode.utils.AimGoalPID;
 
 import java.util.function.Supplier;
 
@@ -47,13 +48,16 @@ public class FtcTeleOp extends NextFTCOpMode {
     private Supplier<PathChain> pathChain;
     private TelemetryManager telemetryM;
     private boolean slowMode = false;
+    private boolean aimAtGoal = false;
     private final double slowModeMultiplier = 0.5;
     Button gamepad1a = button(() -> gamepad1.cross);
     Button gamepad1rightBumper = button(() -> gamepad1.right_bumper);
-    Button gamepad1B = button(()-> gamepad1.circle);
-    Button gamepad1X = button(()-> gamepad1.triangle);
+    Button gamepad1leftBumper = button(() -> gamepad1.left_bumper);
+    Button gamepad1B = button(() -> gamepad1.circle);
+    Button gamepad1X = button(() -> gamepad1.triangle);
 
     Follower follower;
+    AimGoalPID aimGoalPID;
 
 
     @Override
@@ -82,10 +86,12 @@ public class FtcTeleOp extends NextFTCOpMode {
                 .addPath(new Path(new BezierLine(follower::getPose, new Pose(45, 98))))
                 .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, Math.toRadians(45), 0.8))
                 .build();
+
+        aimGoalPID = new AimGoalPID(vision, follower);
         configureBindings();
     }
 
-    private void configureBindings(){
+    private void configureBindings() {
         // Follow sample automated path on A button
         gamepad1a.whenBecomesTrue(() -> {
             new FollowPath(pathChain.get());
@@ -93,19 +99,23 @@ public class FtcTeleOp extends NextFTCOpMode {
         });
 
         // Toggle slow mode on right bumper
-        gamepad1rightBumper.whenBecomesTrue(() ->{
+        gamepad1rightBumper.whenBecomesTrue(() -> {
             slowMode = !slowMode;
         });
 
+        // Toggle aim at goal when left bumper is pressed (this eventually will happen w/o driver input)
+        gamepad1leftBumper.whenBecomesTrue(() -> aimAtGoal = !aimAtGoal);
+
         // Cancel auto path when B is pressed
         gamepad1B
-                .and(()-> !follower.isBusy())
-                .whenBecomesTrue(()->{
+                .and(() -> !follower.isBusy())
+                .whenBecomesTrue(() -> {
                     follower.startTeleopDrive();
                     automatedDrive = false;
                 });
         gamepad1X.whenBecomesTrue(indicators::setColorRed);
     }
+
     @Override
     public void onStartButtonPressed() {
         follower.startTeleopDrive(true);
@@ -123,14 +133,22 @@ public class FtcTeleOp extends NextFTCOpMode {
             //In case the drivers want to use a "slowMode" you can scale the vectors
 
             //This is the normal version to use in the TeleOp
-            if (!slowMode) follower.setTeleOpDrive(
+            if (!slowMode && !aimAtGoal) follower.setTeleOpDrive(
                     -gamepad1.left_stick_y,
                     -gamepad1.left_stick_x,
                     -gamepad1.right_stick_x,
                     true // Robot Centric
             );
 
-                //This is how it looks with slowMode on
+            if (aimAtGoal) {
+                follower.setTeleOpDrive(
+                        -gamepad1.left_stick_y,
+                        -gamepad1.left_stick_x,
+                        aimGoalPID.update(),
+                        false); // Disable robot centric coordinates for aiming at the goal
+
+            }
+            //This is how it looks with slowMode on
             else follower.setTeleOpDrive(
                     -gamepad1.left_stick_y * slowModeMultiplier,
                     -gamepad1.left_stick_x * slowModeMultiplier,

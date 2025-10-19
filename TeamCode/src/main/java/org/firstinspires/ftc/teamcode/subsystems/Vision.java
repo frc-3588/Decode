@@ -2,6 +2,9 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
+import com.pedropathing.ftc.FTCCoordinates;
+import com.pedropathing.geometry.PedroCoordinates;
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.rev.Rev9AxisImu;
@@ -21,6 +24,7 @@ public class Vision implements Subsystem {
     private TelemetryManager telemetryManager;
     private LLResult currPose;
     private final HardwareMap hardwareMap;
+
     public Vision(HardwareMap hardwareMap) {
         this.hardwareMap = hardwareMap;
         telemetryManager = PanelsTelemetry.INSTANCE.getTelemetry();
@@ -52,10 +56,23 @@ public class Vision implements Subsystem {
         }
     }
 
-    public Pose3D getCurrPose() {
+    public Pose getCurrPose() {
         // This needs to get improved, but it works for now
-        if (currPose.getStaleness() < Constants.VisionStalenessTimeout){
-            return currPose.getBotpose_MT2();
+        if (currPose.getStaleness() < Constants.VisionStalenessTimeout) {
+            Pose3D llPosition = currPose.getBotpose_MT2();
+            return new Pose(llPosition.getPosition().x,
+                    llPosition.getPosition().y,
+                    llPosition.getOrientation().getYaw(),
+                    FTCCoordinates.INSTANCE)
+                    .getAsCoordinateSystem(PedroCoordinates.INSTANCE);
+        } else {
+            return null;
+        }
+    }
+
+    public LLResult getLLResult() {
+        if (currPose.getStaleness() < Constants.VisionStalenessTimeout) {
+            return currPose;
         } else {
             return null;
         }
