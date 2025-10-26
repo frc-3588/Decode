@@ -15,8 +15,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Supplier;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
-import org.firstinspires.ftc.teamcode.utils.FusedAprilTagLocalizer;
 
 @Configurable
 public class Constants {
@@ -32,12 +30,14 @@ public class Constants {
             .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
             .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD);
     public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);
+    
 
     public static Follower createFollower(HardwareMap hardwareMap, Supplier<Pose> visionPoseSupplier) {
         return new FollowerBuilder(followerConstants, hardwareMap)
                 .pathConstraints(pathConstraints)
                 .mecanumDrivetrain(driveConstants)
-                .setLocalizer(new FusedAprilTagLocalizer(hardwareMap, localizerConstants, AutoConstants.startPose, visionPoseSupplier))
+                .pinpointLocalizer(localizerConstants)
+//                .setLocalizer(new FusedAprilTagLocalizer(hardwareMap, localizerConstants, AutoConstants.startPose, visionPoseSupplier))
                 .build();
     }
 
@@ -46,18 +46,35 @@ public class Constants {
     }
 
     public static PinpointConstants localizerConstants = new PinpointConstants()
-            .forwardPodY(-5)
-            .strafePodX(0.5)
+            .forwardPodY(-1.812)
+            .strafePodX(-0.604)
             .distanceUnit(DistanceUnit.INCH)
-            .hardwareMapName("pinpoint")
+            .hardwareMapName("odo")
             .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)
             .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
             .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD);
-    public static double VisionStalenessTimeout = 100; //milliseconds
-    public static double visionModelVariance = 0;
-    public static double visionSensorVariance = 0;
-    public static int visionPastSamples = 1;
 
+    @Configurable
+    public static class IntakeConstants{
+        public final static double intakePower = 0.75;
+        public static final boolean intakeInverted = true;
+        public static final String intakeMotor = "intake";
+    }
+ 
+    @Configurable
+    public static class VisionConstants {
+        public static double VisionStalenessTimeout = 100; //milliseconds
+        public static double visionModelVariance = 0;
+        public static double visionSensorVariance = 0;
+        public static int visionPastSamples = 1;
+    }
+    @Configurable
+    public static class ShooterConstants {
+        public static String shooterMotor = "shooter";
+
+        public static final boolean shooterInverted = false;
+        public static final double shooterPower = 0.75;
+    }
     @Configurable
     public static class AutoConstants {
         public static Pose startPose = new Pose(28.5, 128, Math.toRadians(180)); // Start Pose of our robot.

@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.utils;
 
-import static org.firstinspires.ftc.teamcode.Constants.visionModelVariance;
-import static org.firstinspires.ftc.teamcode.Constants.visionPastSamples;
-import static org.firstinspires.ftc.teamcode.Constants.visionSensorVariance;
+import static org.firstinspires.ftc.teamcode.Constants.VisionConstants.visionModelVariance;
+import static org.firstinspires.ftc.teamcode.Constants.VisionConstants.visionPastSamples;
+import static org.firstinspires.ftc.teamcode.Constants.VisionConstants.visionSensorVariance;
 
 import com.ThermalEquilibrium.homeostasis.Filters.FilterAlgorithms.KalmanFilter;
 import com.pedropathing.ftc.localization.constants.PinpointConstants;

@@ -11,9 +11,8 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.HeadingInterpolator;
 import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
-import com.qualcomm.hardware.rev.Rev9AxisImu;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.subsystems.Indicators;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
@@ -28,17 +27,15 @@ import dev.nextftc.bindings.BindingManager;
 import dev.nextftc.bindings.Button;
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.extensions.pedro.FollowPath;
-import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.ftc.NextFTCOpMode;
 
 import static dev.nextftc.bindings.Bindings.button;
-import static dev.nextftc.extensions.pedro.PedroComponent.follower;
 
 @Configurable
 @TeleOp
 public class FtcTeleOp extends NextFTCOpMode {
     private Vision vision;
-    private Intake intake;
+    private Intake intake = new Intake(hardwareMap);
     private Shooter shooter;
     private Turret turret;
     private Indicators indicators;
@@ -51,22 +48,24 @@ public class FtcTeleOp extends NextFTCOpMode {
     private boolean aimAtGoal = false;
     private final double slowModeMultiplier = 0.5;
     Button gamepad1a = button(() -> gamepad1.cross);
+    Button gamepad1b = button(() -> gamepad1.triangle);
     Button gamepad1rightBumper = button(() -> gamepad1.right_bumper);
     Button gamepad1leftBumper = button(() -> gamepad1.left_bumper);
     Button gamepad1B = button(() -> gamepad1.circle);
-    Button gamepad1X = button(() -> gamepad1.triangle);
+    Button gamepad1X = button(() -> gamepad1.cross);
+    Button gamepad1Tri = button(()->gamepad1.triangle);
 
     Follower follower;
     AimGoalPID aimGoalPID;
 
+    DcMotor shooterMotor;
+    private boolean shooterEnabled = false;
 
     @Override
     public void onInit() {
         vision = new Vision(hardwareMap);
-        intake = new Intake();
-        shooter = new Shooter();
+        shooter = new Shooter(hardwareMap);
         turret = new Turret();
-
         indicators = new Indicators(hardwareMap);
 
         addComponents(
@@ -88,6 +87,8 @@ public class FtcTeleOp extends NextFTCOpMode {
                 .build();
 
         aimGoalPID = new AimGoalPID(vision, follower);
+
+        shooterMotor = hardwareMap.get(DcMotor.class, "shooter");
         configureBindings();
     }
 
@@ -113,7 +114,16 @@ public class FtcTeleOp extends NextFTCOpMode {
                     follower.startTeleopDrive();
                     automatedDrive = false;
                 });
-        gamepad1X.whenBecomesTrue(indicators::setColorRed);
+        gamepad1X.whenBecomesTrue(() -> {
+            telemetry.speak("INTAKE");
+            intake.togglePower();
+        });
+        gamepad1Tri.whenBecomesTrue(()->{
+            telemetry.speak("SHOOTER");
+            shooterMotor.setPower(shooterEnabled ? 0 : 1);
+            shooterEnabled = !shooterEnabled;
+//            shooter.togglePower();
+        });
     }
 
     @Override
@@ -133,28 +143,31 @@ public class FtcTeleOp extends NextFTCOpMode {
             //In case the drivers want to use a "slowMode" you can scale the vectors
 
             //This is the normal version to use in the TeleOp
-            if (!slowMode && !aimAtGoal) follower.setTeleOpDrive(
+//            if (!slowMode && !aimAtGoal) {follower.setTeleOpDrive(
+//                    -gamepad1.left_stick_y,
+//                    -gamepad1.left_stick_x,
+//                    -gamepad1.right_stick_x,
+//                    false // Robot Centric
+//            );} else if (aimAtGoal) {
+//                follower.setTeleOpDrive(
+//                        -gamepad1.left_stick_y,
+//                        -gamepad1.left_stick_x,
+//                        aimGoalPID.update(),
+//                        false); // Disable robot centric coordinates for aiming at the goal
+//
+//            }
+//            //This is how it looks with slowMode on
+//            else follower.setTeleOpDrive(
+//                    -gamepad1.left_stick_y * slowModeMultiplier,
+//                    -gamepad1.left_stick_x * slowModeMultiplier,
+//                    -gamepad1.right_stick_x * slowModeMultiplier,
+//                        false // Robot Centric
+//            );
+            follower.setTeleOpDrive(
                     -gamepad1.left_stick_y,
                     -gamepad1.left_stick_x,
                     -gamepad1.right_stick_x,
-                    true // Robot Centric
-            );
-
-            if (aimAtGoal) {
-                follower.setTeleOpDrive(
-                        -gamepad1.left_stick_y,
-                        -gamepad1.left_stick_x,
-                        aimGoalPID.update(),
-                        false); // Disable robot centric coordinates for aiming at the goal
-
-            }
-            //This is how it looks with slowMode on
-            else follower.setTeleOpDrive(
-                    -gamepad1.left_stick_y * slowModeMultiplier,
-                    -gamepad1.left_stick_x * slowModeMultiplier,
-                    -gamepad1.right_stick_x * slowModeMultiplier,
-                    true // Robot Centric
-            );
+                    true);
         }
 
         //Stop automated following if the follower is done

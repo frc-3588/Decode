@@ -42,23 +42,23 @@ public class Vision implements Subsystem {
 
     @Override
     public void periodic() {
-        YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
-        limelight.updateRobotOrientation(orientation.getYaw(AngleUnit.DEGREES));
-        LLResult result = limelight.getLatestResult();
-        if (result != null) {
-            if (result.isValid()) {
-                Pose3D botpose = result.getBotpose_MT2();
-                currPose = result;
-                double x = botpose.getPosition().x;
-                double y = botpose.getPosition().y;
-                telemetryManager.addData("MT2 Location:", "(" + x + ", " + y + ")");
-            }
-        }
+//        YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
+//        limelight.updateRobotOrientation(orientation.getYaw(AngleUnit.DEGREES));
+//        LLResult result = limelight.getLatestResult();
+//        if (result != null) {
+//            if (result.isValid()) {
+//                Pose3D botpose = result.getBotpose_MT2();
+//                currPose = result;
+//                double x = botpose.getPosition().x;
+//                double y = botpose.getPosition().y;
+//                telemetryManager.addData("MT2 Location:", "(" + x + ", " + y + ")");
+//            }
+//        }
     }
 
     public Pose getCurrPose() {
         // This needs to get improved, but it works for now
-        if (currPose.getStaleness() < Constants.VisionStalenessTimeout) {
+        if (currPose.getStaleness() < Constants.VisionConstants.VisionStalenessTimeout) {
             Pose3D llPosition = currPose.getBotpose_MT2();
             return new Pose(llPosition.getPosition().x,
                     llPosition.getPosition().y,
@@ -71,7 +71,7 @@ public class Vision implements Subsystem {
     }
 
     public LLResult getLLResult() {
-        if (currPose.getStaleness() < Constants.VisionStalenessTimeout) {
+        if (currPose.getStaleness() < Constants.VisionConstants.VisionStalenessTimeout) {
             return currPose;
         } else {
             return null;
