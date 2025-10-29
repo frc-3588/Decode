@@ -35,9 +35,6 @@ import static dev.nextftc.bindings.Bindings.button;
 @TeleOp
 public class FtcTeleOp extends NextFTCOpMode {
     private Vision vision;
-    private Intake intake = new Intake(hardwareMap);
-    private Shooter shooter;
-    private Turret turret;
     private Indicators indicators;
 
 
@@ -58,23 +55,17 @@ public class FtcTeleOp extends NextFTCOpMode {
     Follower follower;
     AimGoalPID aimGoalPID;
 
-    DcMotor shooterMotor;
-    private boolean shooterEnabled = false;
 
     @Override
     public void onInit() {
         vision = new Vision(hardwareMap);
-        shooter = new Shooter(hardwareMap);
-        turret = new Turret();
         indicators = new Indicators(hardwareMap);
 
         addComponents(
                 new SubsystemComponent(vision),
-                new SubsystemComponent(intake),
-                new SubsystemComponent(shooter),
-                new SubsystemComponent(indicators),
-                new SubsystemComponent(turret));
-
+                new SubsystemComponent(Intake.INSTANCE),
+                new SubsystemComponent(Shooter.INSTANCE),
+                new SubsystemComponent(indicators));
         follower = Constants.createFollower(hardwareMap);
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
 
@@ -88,7 +79,6 @@ public class FtcTeleOp extends NextFTCOpMode {
 
         aimGoalPID = new AimGoalPID(vision, follower);
 
-        shooterMotor = hardwareMap.get(DcMotor.class, "shooter");
         configureBindings();
     }
 
@@ -114,16 +104,8 @@ public class FtcTeleOp extends NextFTCOpMode {
                     follower.startTeleopDrive();
                     automatedDrive = false;
                 });
-        gamepad1X.whenBecomesTrue(() -> {
-            telemetry.speak("INTAKE");
-            intake.togglePower();
-        });
-        gamepad1Tri.whenBecomesTrue(()->{
-            telemetry.speak("SHOOTER");
-            shooterMotor.setPower(shooterEnabled ? 0 : 1);
-            shooterEnabled = !shooterEnabled;
-//            shooter.togglePower();
-        });
+        gamepad1X.whenBecomesTrue(Intake.INSTANCE::togglePower);
+        gamepad1Tri.whenBecomesTrue(Shooter.INSTANCE::togglePower);
     }
 
     @Override

@@ -73,7 +73,7 @@ public class Constants {
         public static String shooterMotor = "shooter";
 
         public static final boolean shooterInverted = false;
-        public static final double shooterPower = 0.75;
+        public static final double shooterPower =  1;
     }
     @Configurable
     public static class AutoConstants {

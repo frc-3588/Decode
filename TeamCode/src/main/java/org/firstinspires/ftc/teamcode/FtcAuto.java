@@ -29,8 +29,8 @@ import static dev.nextftc.extensions.pedro.PedroComponent.follower;
 @Autonomous(name = "Auto", group = "Primary")
 public class FtcAuto extends NextFTCOpMode {
     private final Vision vision = new Vision(hardwareMap);
-    private final Intake intake = new Intake(hardwareMap);
-    private final Shooter shooter = new Shooter(hardwareMap);
+    private final Intake intake = new Intake();
+    private final Shooter shooter = new Shooter();
     private final Turret turret = new Turret();
     private final Indicators indicators = new Indicators(hardwareMap);
 

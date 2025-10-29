@@ -1,43 +1,37 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import static org.firstinspires.ftc.teamcode.Constants.ShooterConstants.shooterMotor;
 import static org.firstinspires.ftc.teamcode.Constants.ShooterConstants.shooterPower;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Constants;
 
 import dev.nextftc.core.subsystems.Subsystem;
+import dev.nextftc.hardware.controllable.MotorGroup;
+import dev.nextftc.hardware.impl.MotorEx;
 
 public class Shooter implements Subsystem {
-    DcMotor motor;
+    MotorEx motor1 = new MotorEx("shooter1");
+    MotorEx motor2 = new MotorEx("shooter2");
+    MotorGroup shooterMotors = new MotorGroup(motor1, motor2);
     boolean power = false;
 
-    HardwareMap map;
+    public static final Shooter INSTANCE = new Shooter() {};
+
+
     @Override
     public void periodic() {
     }
 
     @Override
     public void initialize() {
-//        motor = map.get(DcMotor.class, shooterMotor);
-    }
-
-    public Shooter(HardwareMap map){
-        this.map = map;
-
     }
 
     public void togglePower(){
 
         if (power){
-//            motor.setPower(0);
+            shooterMotors.setPower(0);
             power = false;
         } else {
-//            motor.setPower(Constants.ShooterConstants.shooterInverted ? -shooterPower : shooterPower);
+            shooterMotors.setPower(Constants.ShooterConstants.shooterInverted ? -shooterPower : shooterPower);
             power = true;;
         }
     }
