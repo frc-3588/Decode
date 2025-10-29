@@ -25,11 +25,13 @@ import java.util.function.Supplier;
 
 import dev.nextftc.bindings.BindingManager;
 import dev.nextftc.bindings.Button;
+import dev.nextftc.bindings.Range;
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.extensions.pedro.FollowPath;
 import dev.nextftc.ftc.NextFTCOpMode;
 
 import static dev.nextftc.bindings.Bindings.button;
+import static dev.nextftc.bindings.Bindings.range;
 
 @Configurable
 @TeleOp
@@ -51,6 +53,12 @@ public class FtcTeleOp extends NextFTCOpMode {
     Button gamepad1B = button(() -> gamepad1.circle);
     Button gamepad1X = button(() -> gamepad1.cross);
     Button gamepad1Tri = button(()->gamepad1.triangle);
+
+    Range leftStickY = range(() -> -gamepad1.left_stick_y).deadZone(Constants.controllerDeadband);
+    Range leftStickX = range(() -> -gamepad1.left_stick_x).deadZone(Constants.controllerDeadband);
+    Range rightStickX = range(() -> -gamepad1.right_stick_x).deadZone(Constants.controllerDeadband);
+
+
 
     Follower follower;
     AimGoalPID aimGoalPID;
@@ -106,6 +114,8 @@ public class FtcTeleOp extends NextFTCOpMode {
                 });
         gamepad1X.whenBecomesTrue(Intake.INSTANCE::togglePower);
         gamepad1Tri.whenBecomesTrue(Shooter.INSTANCE::togglePower);
+
+
     }
 
     @Override
@@ -146,9 +156,9 @@ public class FtcTeleOp extends NextFTCOpMode {
 //                        false // Robot Centric
 //            );
             follower.setTeleOpDrive(
-                    -gamepad1.left_stick_y,
-                    -gamepad1.left_stick_x,
-                    -gamepad1.right_stick_x,
+                    leftStickY.get(),
+                    leftStickX.get(),
+                    rightStickX.get(),
                     true);
         }
 
