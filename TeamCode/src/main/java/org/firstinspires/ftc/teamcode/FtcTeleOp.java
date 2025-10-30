@@ -12,12 +12,10 @@ import com.pedropathing.paths.HeadingInterpolator;
 import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.subsystems.Indicators;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter;
-import org.firstinspires.ftc.teamcode.subsystems.Turret;
 import org.firstinspires.ftc.teamcode.subsystems.Vision;
 import org.firstinspires.ftc.teamcode.utils.AimGoalPID;
 
@@ -112,7 +110,7 @@ public class FtcTeleOp extends NextFTCOpMode {
                     follower.startTeleopDrive();
                     automatedDrive = false;
                 });
-        gamepad1X.whenBecomesTrue(Intake.INSTANCE::togglePower);
+        gamepad1X.whenBecomesTrue(Intake.INSTANCE::toggleShooterPower);
         gamepad1Tri.whenBecomesTrue(Shooter.INSTANCE::togglePower);
 
 

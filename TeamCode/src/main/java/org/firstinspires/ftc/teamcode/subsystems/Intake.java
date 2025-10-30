@@ -6,11 +6,13 @@ import static org.firstinspires.ftc.teamcode.Constants.IntakeConstants.intakePow
 
 import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.hardware.impl.MotorEx;
+import dev.nextftc.hardware.impl.ServoEx;
 
 public class Intake implements Subsystem {
-    MotorEx motor = new MotorEx("intake").brakeMode();
+    MotorEx flywheelMotor = new MotorEx("intake").brakeMode();
+    ServoEx gate = new ServoEx("gate");
     boolean power = false;
-
+    boolean gateOpen = false;
     public static final Intake INSTANCE = new Intake() {};
 
     @Override
@@ -21,13 +23,22 @@ public class Intake implements Subsystem {
     public void initialize() {
 
     }
-    public void togglePower(){
+    public void toggleShooterPower(){
         if (power){
-            motor.setPower(0);
+            flywheelMotor.setPower(0);
             power = false;
         } else {
-            motor.setPower(intakeInverted ? -intakePower : intakePower);
+            flywheelMotor.setPower(intakeInverted ? -intakePower : intakePower);
             power = true;
         }
     }
+    public void toggleGate(){
+        if (gateOpen){
+            gate.setPosition(0);
+        } else{
+            gate.setPosition(1);
+        }
+
+    }
+
 }
