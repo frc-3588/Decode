@@ -45,9 +45,9 @@ public class FtcTeleOp extends NextFTCOpMode {
     private boolean aimAtGoal = false;
     private final double slowModeMultiplier = 0.5;
     Button gamepad1a = button(() -> gamepad1.cross);
-    Button gamepad1b = button(() -> gamepad1.triangle);
     Button gamepad1rightBumper = button(() -> gamepad1.right_bumper);
     Button gamepad1leftBumper = button(() -> gamepad1.left_bumper);
+    Button gamepad1RightTrigger = button(() -> gamepad1.right_trigger > 0.5);
     Button gamepad1B = button(() -> gamepad1.circle);
     Button gamepad1X = button(() -> gamepad1.cross);
     Button gamepad1Tri = button(()->gamepad1.triangle);
@@ -110,10 +110,9 @@ public class FtcTeleOp extends NextFTCOpMode {
                     follower.startTeleopDrive();
                     automatedDrive = false;
                 });
-        gamepad1X.whenBecomesTrue(Intake.INSTANCE::toggleShooterPower);
-        gamepad1Tri.whenBecomesTrue(Shooter.INSTANCE::togglePower);
-
-
+        gamepad1X.whenBecomesTrue(Intake.INSTANCE::toggleIntakePower);
+        gamepad1Tri.whenBecomesTrue(Shooter.INSTANCE::toggleShooterPower);
+        gamepad1RightTrigger.whenBecomesTrue(Shooter.INSTANCE::toggleGate);
     }
 
     @Override

@@ -16,11 +16,12 @@ public class ServoTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         servo = hardwareMap.servo.get("gate");
-
+    servo.setDirection(Servo.Direction.REVERSE);
         waitForStart();
-
+        timer.schedule(pos1, 5000);
+        timer.schedule(pos2, 10000);
+        servo.setPosition(0.4);
         while (opModeIsActive()) {
-            servo.setPosition(1);
             telemetry.addData("Servo Pos: ", servo.getPosition());
             telemetry.update();
 
@@ -30,20 +31,20 @@ public class ServoTest extends LinearOpMode {
     private TimerTask pos1 = new TimerTask() {
         @Override
         public void run() {
-            servo.setPosition(100);
+            servo.setPosition(0.7);
         }
     };
     private TimerTask pos2 = new TimerTask() {
         @Override
         public void run() {
-            servo.setPosition(2);
+            servo.setPosition(0.8);
         }
     };
-    private TimerTask pos0 = new TimerTask() {
-        @Override
-        public void run() {
-            servo.setPosition(0);
-        }
-    };
+//    private TimerTask pos0 = new TimerTask() {
+//        @Override
+//        public void run() {
+//            servo.setPosition(0);
+//        }
+//    };
 
 }

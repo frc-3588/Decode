@@ -10,9 +10,7 @@ import dev.nextftc.hardware.impl.ServoEx;
 
 public class Intake implements Subsystem {
     MotorEx flywheelMotor = new MotorEx("intake").brakeMode();
-    ServoEx gate = new ServoEx("gate");
     boolean power = false;
-    boolean gateOpen = false;
     public static final Intake INSTANCE = new Intake() {};
 
     @Override
@@ -23,7 +21,7 @@ public class Intake implements Subsystem {
     public void initialize() {
 
     }
-    public void toggleShooterPower(){
+    public void toggleIntakePower(){
         if (power){
             flywheelMotor.setPower(0);
             power = false;
@@ -31,14 +29,6 @@ public class Intake implements Subsystem {
             flywheelMotor.setPower(intakeInverted ? -intakePower : intakePower);
             power = true;
         }
-    }
-    public void toggleGate(){
-        if (gateOpen){
-            gate.setPosition(0);
-        } else{
-            gate.setPosition(1);
-        }
-
     }
 
 }
