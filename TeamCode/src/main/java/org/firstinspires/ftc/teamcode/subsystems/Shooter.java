@@ -17,13 +17,17 @@ public class Shooter implements Subsystem {
     boolean power = false;
     public static final Shooter INSTANCE = new Shooter() {};
 
-
     @Override
     public void periodic() {
     }
 
     @Override
     public void initialize() {
+        gate.getServo().setDirection(Constants.ShooterConstants.gateDir);
+    }
+
+    public void onStart(){
+        gate.setPosition(Constants.ShooterConstants.gateInitPosition);
     }
 
     public void toggleShooterPower(){
@@ -38,10 +42,20 @@ public class Shooter implements Subsystem {
     }
 
     public void toggleGate(){
-        if (gate.getPosition() == 0){
-            gate.setPosition(0.5);
+        if (gate.getPosition() == Constants.ShooterConstants.gateInitPosition){
+            gate.setPosition(Constants.ShooterConstants.gateShootPosition);
         } else {
-            gate.setPosition(0);
+            gate.setPosition(Constants.ShooterConstants.gateInitPosition);
         }
+    }
+
+    public void enableShooter(){
+        power = true;
+        shooterMotors.setPower(Constants.ShooterConstants.shooterInverted ? -shooterPower : shooterPower);
+    }
+
+    public void disableShooter(){
+        power = false;
+        shooterMotors.setPower(0);
     }
 }

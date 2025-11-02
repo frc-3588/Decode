@@ -13,6 +13,7 @@ import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.commands.WarmupThenShoot;
 import org.firstinspires.ftc.teamcode.subsystems.Indicators;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter;
@@ -24,6 +25,10 @@ import java.util.function.Supplier;
 import dev.nextftc.bindings.BindingManager;
 import dev.nextftc.bindings.Button;
 import dev.nextftc.bindings.Range;
+import dev.nextftc.core.commands.delays.Delay;
+import dev.nextftc.core.commands.delays.WaitUntil;
+import dev.nextftc.core.commands.groups.SequentialGroup;
+import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.extensions.pedro.FollowPath;
 import dev.nextftc.ftc.NextFTCOpMode;
@@ -48,6 +53,7 @@ public class FtcTeleOp extends NextFTCOpMode {
     Button gamepad1rightBumper = button(() -> gamepad1.right_bumper);
     Button gamepad1leftBumper = button(() -> gamepad1.left_bumper);
     Button gamepad1RightTrigger = button(() -> gamepad1.right_trigger > 0.5);
+    Button gamepad1LeftTrigger = button(() -> gamepad1.left_trigger > 0.5);
     Button gamepad1B = button(() -> gamepad1.circle);
     Button gamepad1X = button(() -> gamepad1.cross);
     Button gamepad1Tri = button(()->gamepad1.triangle);
@@ -113,11 +119,13 @@ public class FtcTeleOp extends NextFTCOpMode {
         gamepad1X.whenBecomesTrue(Intake.INSTANCE::toggleIntakePower);
         gamepad1Tri.whenBecomesTrue(Shooter.INSTANCE::toggleShooterPower);
         gamepad1RightTrigger.whenBecomesTrue(Shooter.INSTANCE::toggleGate);
+        gamepad1LeftTrigger.whenBecomesTrue(WarmupThenShoot.get());
     }
 
     @Override
     public void onStartButtonPressed() {
         follower.startTeleopDrive(true);
+        Shooter.INSTANCE.onStart();
     }
 
     @Override

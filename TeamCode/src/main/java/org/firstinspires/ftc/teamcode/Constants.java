@@ -12,6 +12,7 @@ import com.pedropathing.paths.PathConstraints;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Supplier;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -75,6 +76,11 @@ public class Constants {
 
         public static final boolean shooterInverted = false;
         public static final double shooterPower =  1;
+        public static double gateInitPosition = 0.3;
+        public static  double gateShootPosition = 0;
+        public static  Servo.Direction gateDir = Servo.Direction.FORWARD;
+        public static double warmUpTime = 2; // Seconds
+        public static double gateOpenTime = 1; // Seconds
     }
     @Configurable
     public static class AutoConstants {
