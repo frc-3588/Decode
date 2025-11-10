@@ -1,8 +1,17 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import static org.firstinspires.ftc.teamcode.Constants.ShooterConstants.maxGoalAngle;
+import static org.firstinspires.ftc.teamcode.Constants.ShooterConstants.maxRange;
 import static org.firstinspires.ftc.teamcode.Constants.ShooterConstants.shooterPower;
 
+import com.pedropathing.ftc.FTCCoordinates;
+import com.pedropathing.geometry.PedroCoordinates;
+import com.pedropathing.geometry.Pose;
+
 import org.firstinspires.ftc.teamcode.Constants;
+import org.firstinspires.ftc.teamcode.RobotState;
+import org.firstinspires.ftc.teamcode.utils.DetectInLaunchZone;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.hardware.controllable.MotorGroup;
@@ -59,8 +68,41 @@ public class Shooter implements Subsystem {
         shooterMotors.setPower(0);
     }
 
+    /**
+     * Ability to shoot depends on being in a valid position and motor speed
+     * @return Is it safe to shoot?
+     */
     public boolean canShoot(){
+        // For shooter alignment we only use the april tag on the goal we are trying to shoot in
+        AprilTagDetection detection;
+        if (RobotState.isRed) {
+            detection = Vision.INSTANCE.getDetectionById(24);
+        } else {
+            detection = Vision.INSTANCE.getDetectionById(20);
+        }
+        // If we can not see the april tag on the goal, we can not shoot
+        if (detection == null){
+            return false;
+        }
+        // Convert to Pedro Coords
+        Pose pedroPose = new Pose(detection.robotPose.getPosition().x,
+                detection.robotPose.getPosition().y,
+                detection.robotPose.getOrientation().getYaw(),
+                FTCCoordinates.INSTANCE).getAsCoordinateSystem(PedroCoordinates.INSTANCE);
+        // Check 1: Is bot in launch zone?
+        if (!DetectInLaunchZone.isInLaunchZone(pedroPose.getX(), pedroPose.getY())){
+            return false;
+        }
+        // Check 2: Is bot in range?
+        if (detection.ftcPose.range > maxRange){
+            return false;
+        }
+        // Check 3: Is angle reasonable
+        if (Math.abs(detection.ftcPose.bearing) > maxGoalAngle){
+            return false;
+        }
 
-        return false;
+        // If all checks pass the bot can shoot
+        return true;
     }
 }
