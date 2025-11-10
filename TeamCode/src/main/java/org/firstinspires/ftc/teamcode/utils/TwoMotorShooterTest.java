@@ -15,7 +15,7 @@ public class TwoMotorShooterTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        motor1 = new MotorEx(hardwareMap.get(DcMotorEx.class, "shooter"));
+        motor1 = new MotorEx(hardwareMap.get(DcMotorEx.class, "shooter1"));
         motor2 = new MotorEx(hardwareMap.get(DcMotorEx.class, "shooter2"));
         motorGroup = new MotorGroup(motor1, motor2);
         waitForStart();
