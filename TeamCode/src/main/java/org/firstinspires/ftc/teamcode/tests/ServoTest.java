@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.utils;
+package org.firstinspires.ftc.teamcode.tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -6,8 +6,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import java.util.Timer;
 import java.util.TimerTask;
-
-import dev.nextftc.hardware.impl.ServoEx;
 
 @TeleOp(name = "Gate Servo Test")
 public class ServoTest extends LinearOpMode {
