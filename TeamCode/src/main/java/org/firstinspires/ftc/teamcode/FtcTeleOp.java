@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.commands.WarmupThenShoot;
 import org.firstinspires.ftc.teamcode.subsystems.Indicators;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter;
+import org.firstinspires.ftc.teamcode.subsystems.Vision;
 import org.firstinspires.ftc.teamcode.subsystems.VisionLL;
 import org.firstinspires.ftc.teamcode.utils.AimGoalPID;
 
@@ -66,11 +67,8 @@ public class FtcTeleOp extends NextFTCOpMode {
 
     @Override
     public void onInit() {
-        visionLL = new VisionLL(hardwareMap);
-        indicators = new Indicators(hardwareMap);
-
         addComponents(
-                new SubsystemComponent(visionLL),
+                new SubsystemComponent(Vision.INSTANCE),
                 new SubsystemComponent(Intake.INSTANCE),
                 new SubsystemComponent(Shooter.INSTANCE),
                 new SubsystemComponent(indicators));

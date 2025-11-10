@@ -6,22 +6,21 @@ import com.qualcomm.robotcore.hardware.Servo;
 import dev.nextftc.core.subsystems.Subsystem;
 
 public class Indicators implements Subsystem {
-//    Servo indicator1;
-//    Servo indicator2;
 
-    public Indicators(HardwareMap hardwareMap){
-//        indicator1 = hardwareMap.get(Servo.class, "led1");
-//        indicator2 = hardwareMap.get(Servo.class, "led2");
+    public static Indicators INSTANCE = new Indicators();
+
+    public static enum indicatorStates {
+        hasArtifact,
+        canShoot,
+        shooting,
+        preMatch,
+        postMatch
     }
 
-//    @Override
-//    public void initialize() {
-//        indicator1.setPosition(0.722);
-//        indicator2.setPosition(0.500);
-//    }
-//
+    @Override
+    public void initialize() {
+    }
+
     public void setColorRed(){
-//        indicator1.setPosition(0.277);
-//        indicator2.setPosition(0.277);
     }
 }
