@@ -175,7 +175,7 @@ The readme.md file located in the [/TeamCode/src/main/java/org/firstinspires/ftc
 ## Version 10.1 (20240919-122750)
 
 ### Enhancements
-* Adds new OpenCV-based `VisionProcessor`s (which may be attached to a VisionPortal in either Java or Blocks) to help teams implement color processing via computer vision in the INTO THE DEEP game
+* Adds new OpenCV-based `VisionProcessor`s (which may be attached to a VisionPortal in either Java or Blocks) to help teams implement color processing via computer visionLL in the INTO THE DEEP game
   * `ColorBlobLocatorProcessor` implements OpenCV color "blob" detection. A new sample program `ConceptVisionColorLocator` demonstrates its use.
     * A choice is offered between pre-defined color ranges, or creating a custom one in RGB, HSV, or YCrCb color space
     * The ability is provided to restrict detection to a specified Region of Interest on the screen
@@ -279,7 +279,7 @@ The readme.md file located in the [/TeamCode/src/main/java/org/firstinspires/ftc
 * Added Java OpMode sample SensorDigitalTouch.
 * Several improvements to VisionPortal
   * Adds option to control whether the stream is automatically started following a `.build()` call on a VisionPortal Builder
-  * Adds option to control whether the vision processing statistics overlay is rendered or not
+  * Adds option to control whether the visionLL processing statistics overlay is rendered or not
   * VisionPortals now implement the `CameraStreamSource` interface, allowing multiportal users to select which portal is routed to the DS in INIT by calling CameraStreamServer.getInstance().setSource(visionPortal). Can be selected via gamepad, between Camera Stream sessions.
   * Add option to `AprilTagProcessor` to suppress calibration warnings
   * Improves camera calibration warnings
@@ -376,7 +376,7 @@ The readme.md file located in the [/TeamCode/src/main/java/org/firstinspires/ftc
   TensorFlow Object Detection can be opened in the Blocks editor, but running them will not work.
 
 ### New features
-* Adds new `VisionPortal` API for computer vision
+* Adds new `VisionPortal` API for computer visionLL
     * **This API may be subject to change for final kickoff release!**
     * Several new samples added.
     * Adds support for detecting AprilTags.
@@ -748,7 +748,7 @@ This is a bug fix only release to address the following four issues.
 
 ### New features
 * Includes TensorFlow inference model and sample OpModes to detect Ultimate Goal Starter Stacks (four rings vs single ring stack).
-* Includes Vuforia Ultimate Goal vision targets and sample OpModes.
+* Includes Vuforia Ultimate Goal visionLL targets and sample OpModes.
 * Introduces a digital zoom feature for TensorFlow object detection (to detect objects more accurately at greater distances).
 * Adds configuration entry for the REV UltraPlanetary HD Hex motor
 
@@ -1471,7 +1471,7 @@ Changes include:
   * Support for Modern Robotics Range Sensor.
   * Revise device names for Pushbot templates to match the names used in Pushbot guide.
   * Fixed bug so that IrSeekerSensorV3 device is accessible as IrSeekerSensor in hardwareMap.
-  * Modified computer vision code to require an individual Vuforia license (per legal requirement from PTC).
+  * Modified computer visionLL code to require an individual Vuforia license (per legal requirement from PTC).
   * Minor fixes.
   * Blockly enhancements:
      - Support for Voltage Sensor.
@@ -1516,7 +1516,7 @@ Changes include:
  * Prototype Blockly Programming Mode has been added to FTC Robot Controller.  Users can place the Robot Controller into this mode, and then use a device (such as a laptop) that has a Javascript enabled browser to write Blockly-based OpModes directly onto the Robot Controller.
  * Users can now configure the robot remotely through the FTC Driver Station app.
  * Android Studio project supports Android Studio 2.1.x and compile SDK Version 23 (Marshmallow).
- * Vuforia Computer Vision SDK integrated into FTC SDK.  Users can use sample vision targets to get localization information on a standard FTC field.
+ * Vuforia Computer Vision SDK integrated into FTC SDK.  Users can use sample visionLL targets to get localization information on a standard FTC field.
  * Project structure has been reorganized so that there is now a TeamCode package that users can use to place their local/custom OpModes into this package.
  * Inspection function has been integrated into the FTC Robot Controller and Driver Station Apps (Thanks Team HazMat… 9277 & 10650!).
  * Audio cues have been incorporated into FTC SDK.

@@ -15,12 +15,15 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Supplier;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 @Configurable
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants();
-    public static final double controllerDeadband=0.1;
+    public static final double controllerDeadband = 0.1;
     public static MecanumConstants driveConstants = new MecanumConstants()
             .maxPower(1)
             .rightFrontMotorName("fr")
@@ -32,7 +35,7 @@ public class Constants {
             .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
             .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD);
     public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);
-    
+
 
     public static Follower createFollower(HardwareMap hardwareMap, Supplier<Pose> visionPoseSupplier) {
         return new FollowerBuilder(followerConstants, hardwareMap)
@@ -57,31 +60,41 @@ public class Constants {
             .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD);
 
     @Configurable
-    public static class IntakeConstants{
+    public static class IntakeConstants {
         public final static double intakePower = 0.75;
         public static final boolean intakeInverted = true;
         public static final String intakeMotor = "intake";
     }
- 
+
     @Configurable
     public static class VisionConstants {
+        public static Position cameraPosition = new Position(DistanceUnit.INCH,
+                0, 0, 0, 0);
+        public static YawPitchRollAngles cameraOrientation = new YawPitchRollAngles(AngleUnit.DEGREES,
+                0, 0, 0, 0);
+        public static String localizationWebCamName = "Webcam 1";
+
         public static double VisionStalenessTimeout = 100; //milliseconds
         public static double visionModelVariance = 0;
         public static double visionSensorVariance = 0;
         public static int visionPastSamples = 1;
+
+        public static double minDecisionMargin = 10;
     }
+
     @Configurable
     public static class ShooterConstants {
         public static String shooterMotor = "shooter";
 
         public static final boolean shooterInverted = false;
-        public static final double shooterPower =  1;
+        public static final double shooterPower = 1;
         public static double gateInitPosition = 0.3;
-        public static  double gateShootPosition = 0;
-        public static  Servo.Direction gateDir = Servo.Direction.FORWARD;
+        public static double gateShootPosition = 0;
+        public static Servo.Direction gateDir = Servo.Direction.FORWARD;
         public static double warmUpTime = 2; // Seconds
         public static double gateOpenTime = 1; // Seconds
     }
+
     @Configurable
     public static class AutoConstants {
         public static Pose startPose = new Pose(28.5, 128, Math.toRadians(180)); // Start Pose of our robot.
@@ -91,6 +104,6 @@ public class Constants {
         public static Pose pickup3Pose = new Pose(49, 135, Math.toRadians(0)); // Lowest (Third Set) of Artifacts from the Spike Mark.
     }
 
-    public static PIDCoefficients aimGoalCoefficients = new PIDCoefficients(0,0,0);
+    public static PIDCoefficients aimGoalCoefficients = new PIDCoefficients(0, 0, 0);
     public static double aimGoalThresholdDegrees = 3.0;
 }

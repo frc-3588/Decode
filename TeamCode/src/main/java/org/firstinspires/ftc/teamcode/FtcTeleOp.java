@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.commands.WarmupThenShoot;
 import org.firstinspires.ftc.teamcode.subsystems.Indicators;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter;
-import org.firstinspires.ftc.teamcode.subsystems.Vision;
+import org.firstinspires.ftc.teamcode.subsystems.VisionLL;
 import org.firstinspires.ftc.teamcode.utils.AimGoalPID;
 
 import java.util.function.Supplier;
@@ -25,10 +25,6 @@ import java.util.function.Supplier;
 import dev.nextftc.bindings.BindingManager;
 import dev.nextftc.bindings.Button;
 import dev.nextftc.bindings.Range;
-import dev.nextftc.core.commands.delays.Delay;
-import dev.nextftc.core.commands.delays.WaitUntil;
-import dev.nextftc.core.commands.groups.SequentialGroup;
-import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.extensions.pedro.FollowPath;
 import dev.nextftc.ftc.NextFTCOpMode;
@@ -39,7 +35,7 @@ import static dev.nextftc.bindings.Bindings.range;
 @Configurable
 @TeleOp
 public class FtcTeleOp extends NextFTCOpMode {
-    private Vision vision;
+    private VisionLL visionLL;
     private Indicators indicators;
 
 
@@ -70,11 +66,11 @@ public class FtcTeleOp extends NextFTCOpMode {
 
     @Override
     public void onInit() {
-        vision = new Vision(hardwareMap);
+        visionLL = new VisionLL(hardwareMap);
         indicators = new Indicators(hardwareMap);
 
         addComponents(
-                new SubsystemComponent(vision),
+                new SubsystemComponent(visionLL),
                 new SubsystemComponent(Intake.INSTANCE),
                 new SubsystemComponent(Shooter.INSTANCE),
                 new SubsystemComponent(indicators));
@@ -89,7 +85,7 @@ public class FtcTeleOp extends NextFTCOpMode {
                 .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, Math.toRadians(45), 0.8))
                 .build();
 
-        aimGoalPID = new AimGoalPID(vision, follower);
+        aimGoalPID = new AimGoalPID(visionLL, follower);
 
         configureBindings();
     }

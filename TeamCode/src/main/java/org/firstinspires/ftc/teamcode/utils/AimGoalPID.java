@@ -13,14 +13,14 @@ import com.ThermalEquilibrium.homeostasis.Controllers.Feedback.BasicPID;
 import com.pedropathing.follower.Follower;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 
-import org.firstinspires.ftc.teamcode.subsystems.Vision;
+import org.firstinspires.ftc.teamcode.subsystems.VisionLL;
 
 import java.util.List;
 
 
 
 public class AimGoalPID {
-    private final Vision vision;
+    private final VisionLL visionLL;
     private AngleController pid;
     private Follower follower;
 
@@ -29,11 +29,11 @@ public class AimGoalPID {
      * Its primary system of doing this is attempting to achieve an angle of 0 with the April Tag on the goal
      * If it can not see the April Tag it uses odo data to calculate the angle to face the goal
      *
-     * @param vision The limelight class
+     * @param visionLL The limelight class
      * @param follower The drive train
      */
-    public AimGoalPID(Vision vision, Follower follower) {
-        this.vision = vision;
+    public AimGoalPID(VisionLL visionLL, Follower follower) {
+        this.visionLL = visionLL;
         this.follower = follower;
         pid = new AngleController(new BasicPID(aimGoalCoefficients));
     }
@@ -70,11 +70,11 @@ public class AimGoalPID {
      */
     private LLResultTypes.FiducialResult getVisionTarget() {
         // If there is no valid data don't call a method on it and crash
-        if (vision.getLLResult() == null){
+        if (visionLL.getLLResult() == null){
             return null;
         }
 
-        List<LLResultTypes.FiducialResult> fiducials = vision.getLLResult().getFiducialResults();
+        List<LLResultTypes.FiducialResult> fiducials = visionLL.getLLResult().getFiducialResults();
         for (LLResultTypes.FiducialResult fiducial : fiducials) {
             if ((isRed && fiducial.getFiducialId() == 24) || (!isRed && fiducial.getFiducialId() == 20)) {
                 return fiducial;

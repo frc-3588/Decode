@@ -58,4 +58,9 @@ public class Shooter implements Subsystem {
         power = false;
         shooterMotors.setPower(0);
     }
+
+    public boolean canShoot(){
+
+        return false;
+    }
 }

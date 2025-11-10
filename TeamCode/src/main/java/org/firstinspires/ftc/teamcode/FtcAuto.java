@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Indicators;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.subsystems.Turret;
-import org.firstinspires.ftc.teamcode.subsystems.Vision;
+import org.firstinspires.ftc.teamcode.subsystems.VisionLL;
 import org.firstinspires.ftc.teamcode.utils.Paths;
 
 import dev.nextftc.core.components.SubsystemComponent;
@@ -28,7 +28,7 @@ import static dev.nextftc.extensions.pedro.PedroComponent.follower;
 
 @Autonomous(name = "Auto", group = "Primary")
 public class FtcAuto extends NextFTCOpMode {
-    private final Vision vision = new Vision(hardwareMap);
+    private final VisionLL visionLL = new VisionLL(hardwareMap);
     private final Intake intake = new Intake();
     private final Shooter shooter = new Shooter();
     private final Turret turret = new Turret();
@@ -36,8 +36,8 @@ public class FtcAuto extends NextFTCOpMode {
 
     {
         addComponents(
-                new PedroComponent(hardwareMap1 -> createFollower(hardwareMap, vision::getCurrPose)),
-                new SubsystemComponent(vision),
+                new PedroComponent(hardwareMap1 -> createFollower(hardwareMap, visionLL::getCurrPose)),
+                new SubsystemComponent(visionLL),
                 new SubsystemComponent(intake),
                 new SubsystemComponent(shooter),
                 new SubsystemComponent(indicators),
