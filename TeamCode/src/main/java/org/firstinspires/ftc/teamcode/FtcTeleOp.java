@@ -37,8 +37,6 @@ import static dev.nextftc.bindings.Bindings.range;
 @TeleOp
 public class FtcTeleOp extends NextFTCOpMode {
     private VisionLL visionLL;
-    private Indicators indicators;
-
 
     private boolean automatedDrive;
     private Supplier<PathChain> pathChain;
@@ -71,7 +69,7 @@ public class FtcTeleOp extends NextFTCOpMode {
                 new SubsystemComponent(Vision.INSTANCE),
                 new SubsystemComponent(Intake.INSTANCE),
                 new SubsystemComponent(Shooter.INSTANCE),
-                new SubsystemComponent(indicators));
+                new SubsystemComponent(Indicators.INSTANCE));
         follower = Constants.createFollower(hardwareMap);
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
 
@@ -110,7 +108,10 @@ public class FtcTeleOp extends NextFTCOpMode {
                     follower.startTeleopDrive();
                     automatedDrive = false;
                 });
-        gamepad1X.whenBecomesTrue(Intake.INSTANCE::toggleIntakePower);
+        gamepad1X.whenBecomesTrue(()->{
+            Intake.INSTANCE.toggleIntakePower();
+            telemetry.speak("INTAKE");
+        });
         gamepad1Tri.whenBecomesTrue(Shooter.INSTANCE::toggleShooterPower);
         gamepad1RightTrigger.whenBecomesTrue(Shooter.INSTANCE::toggleGate);
         gamepad1LeftTrigger.whenBecomesTrue(WarmupThenShoot.get());

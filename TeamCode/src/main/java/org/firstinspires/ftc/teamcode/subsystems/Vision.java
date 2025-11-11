@@ -44,6 +44,9 @@ public class Vision implements Subsystem {
 
     @Override
     public void periodic() {
+        if (aprilTag == null){
+            return;
+        }
         detectionList = aprilTag.getDetections();
     }
 

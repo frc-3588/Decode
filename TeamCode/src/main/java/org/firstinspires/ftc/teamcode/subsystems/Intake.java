@@ -9,7 +9,7 @@ import dev.nextftc.hardware.impl.MotorEx;
 import dev.nextftc.hardware.impl.ServoEx;
 
 public class Intake implements Subsystem {
-    MotorEx flywheelMotor = new MotorEx("intake").brakeMode();
+    MotorEx intakeMotor = new MotorEx("intake");
     boolean power = false;
     public static final Intake INSTANCE = new Intake() {};
 
@@ -23,10 +23,10 @@ public class Intake implements Subsystem {
     }
     public void toggleIntakePower(){
         if (power){
-            flywheelMotor.setPower(0);
+            intakeMotor.setPower(0);
             power = false;
         } else {
-            flywheelMotor.setPower(intakeInverted ? -intakePower : intakePower);
+            intakeMotor.setPower(intakeInverted ? -intakePower : intakePower);
             power = true;
         }
     }
