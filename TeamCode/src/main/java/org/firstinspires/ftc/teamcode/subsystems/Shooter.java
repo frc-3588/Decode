@@ -4,6 +4,8 @@ import static org.firstinspires.ftc.teamcode.Constants.ShooterConstants.maxGoalA
 import static org.firstinspires.ftc.teamcode.Constants.ShooterConstants.maxRange;
 import static org.firstinspires.ftc.teamcode.Constants.ShooterConstants.shooterPower;
 
+import com.ThermalEquilibrium.homeostasis.Controllers.Feedback.PIDEx;
+import com.ThermalEquilibrium.homeostasis.Controllers.Feedforward.BasicFeedforward;
 import com.pedropathing.ftc.FTCCoordinates;
 import com.pedropathing.geometry.PedroCoordinates;
 import com.pedropathing.geometry.Pose;
@@ -25,9 +27,18 @@ public class Shooter implements Subsystem {
     MotorGroup shooterMotors = new MotorGroup(motor1, motor2);
     boolean power = false;
     public static final Shooter INSTANCE = new Shooter() {};
+//    private double targetVelocity = 0;
+
+//    PIDEx velocityController = new PIDEx(Constants.ShooterConstants.shooterPIDCoefficients);
+//    BasicFeedforward ffController = new BasicFeedforward(Constants.ShooterConstants.feedForwardConstants);
+
 
     @Override
     public void periodic() {
+//        double currentVelocity = motor1.getVelocity();
+//        double pid = velocityController.calculate(targetVelocity, currentVelocity);
+//        double ff = ffController.calculate(0, targetVelocity, currentVelocity);
+//        shooterMotors.setPower(Math.max(-1, Math.min(1, pid + ff)));
     }
 
     @Override

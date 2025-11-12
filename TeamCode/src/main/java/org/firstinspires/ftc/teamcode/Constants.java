@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.ThermalEquilibrium.homeostasis.Parameters.FeedforwardCoefficients;
 import com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficients;
+import com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficientsEx;
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.follower.FollowerConstants;
@@ -95,6 +97,8 @@ public class Constants {
         public static double gateOpenTime = 1; // Seconds
         public static double maxRange = 60; // inches
         public static double maxGoalAngle = 10; // degrees
+        public static PIDCoefficientsEx shooterPIDCoefficients = new PIDCoefficientsEx(0,0,0,0,0,0);
+        public static FeedforwardCoefficients feedForwardConstants = new FeedforwardCoefficients(0,0,0);
     }
 
     @Configurable
