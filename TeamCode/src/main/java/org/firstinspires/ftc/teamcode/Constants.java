@@ -39,7 +39,7 @@ public class Constants {
     public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);
 
 
-    public static Follower createFollower(HardwareMap hardwareMap, Supplier<Pose> visionPoseSupplier) {
+    public static Follower createFollower(HardwareMap hardwareMap) {
         return new FollowerBuilder(followerConstants, hardwareMap)
                 .pathConstraints(pathConstraints)
                 .mecanumDrivetrain(driveConstants)
@@ -48,9 +48,6 @@ public class Constants {
                 .build();
     }
 
-    public static Follower createFollower(HardwareMap hardwareMap) {
-        return createFollower(hardwareMap, () -> null);
-    }
 
     public static PinpointConstants localizerConstants = new PinpointConstants()
             .forwardPodY(-1.812)
@@ -86,18 +83,14 @@ public class Constants {
 
     @Configurable
     public static class ShooterConstants {
-        public static String shooterMotor = "shooter";
-
-        public static final boolean shooterInverted = false;
-        public static final double shooterPower = 1;
-        public static double gateInitPosition = 0.3;
+        public static double gateInitPosition = 0.18;
         public static double gateShootPosition = 0;
         public static Servo.Direction gateDir = Servo.Direction.FORWARD;
-        public static double warmUpTime = 2; // Seconds
-        public static double gateOpenTime = 1; // Seconds
         public static double maxRange = 60; // inches
         public static double maxGoalAngle = 10; // degrees
-        public static PIDCoefficientsEx shooterPIDCoefficients = new PIDCoefficientsEx(0,0,0,0,0,0);
+        public static double loadedDetectorDebounceDelay = 2000; //ms
+        public static double loadDetectionLightCutoff = 0.2;
+        public static PIDCoefficientsEx shooterPIDCoefficients = new PIDCoefficientsEx(0.25,0,0,0,0,0);
         public static FeedforwardCoefficients feedForwardConstants = new FeedforwardCoefficients(0,0,0);
     }
 

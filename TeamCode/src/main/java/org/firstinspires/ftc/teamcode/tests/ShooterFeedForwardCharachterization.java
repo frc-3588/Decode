@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.tests;
 
+import com.bylazar.telemetry.PanelsTelemetry;
+import com.bylazar.telemetry.TelemetryManager;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -12,16 +14,23 @@ public class ShooterFeedForwardCharachterization extends LinearOpMode {
     MotorEx motor1 = new MotorEx("shooter1");
     MotorEx motor2 = new MotorEx("shooter2");
     MotorGroup shooterMotors = new MotorGroup(motor1, motor2);
+    TelemetryManager tManager;
 
     @Override
     public void runOpMode() throws InterruptedException {
-
+        tManager = PanelsTelemetry.INSTANCE.getTelemetry();
+        tManager.addData("Velocity", 0);
+        tManager.addData("Power", 0);
+        waitForStart();
         for (double p : powers) {
             shooterMotors.setPower(p);
-            Thread.sleep(1000); // wait to reach steady speed
+            Thread.sleep(10000); // wait to reach steady speed
             double v = shooterMotors.getVelocity();
             telemetry.addData("Power", p);
             telemetry.addData("Velocity", v);
+            tManager.addData("Velocity", v);
+            tManager.addData("Power", p);
+            tManager.update();
             telemetry.update();
         }
 

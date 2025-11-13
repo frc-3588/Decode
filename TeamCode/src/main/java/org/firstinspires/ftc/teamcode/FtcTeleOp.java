@@ -12,8 +12,10 @@ import com.pedropathing.paths.HeadingInterpolator;
 import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
+import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 
-import org.firstinspires.ftc.teamcode.commands.WarmupThenShoot;
+import org.firstinspires.ftc.teamcode.commands.Shoot;
 import org.firstinspires.ftc.teamcode.subsystems.Indicators;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter;
@@ -27,7 +29,6 @@ import dev.nextftc.bindings.BindingManager;
 import dev.nextftc.bindings.Button;
 import dev.nextftc.bindings.Range;
 import dev.nextftc.core.components.SubsystemComponent;
-import dev.nextftc.extensions.pedro.FollowPath;
 import dev.nextftc.ftc.NextFTCOpMode;
 
 import static dev.nextftc.bindings.Bindings.button;
@@ -44,19 +45,22 @@ public class FtcTeleOp extends NextFTCOpMode {
     private boolean slowMode = false;
     private boolean aimAtGoal = false;
     private final double slowModeMultiplier = 0.5;
-    Button gamepad1a = button(() -> gamepad1.cross);
+    private NormalizedColorSensor loadedColorSensor;
+    OpticalDistanceSensor loadedDistSensor;
     Button gamepad1rightBumper = button(() -> gamepad1.right_bumper);
     Button gamepad1leftBumper = button(() -> gamepad1.left_bumper);
     Button gamepad1RightTrigger = button(() -> gamepad1.right_trigger > 0.5);
     Button gamepad1LeftTrigger = button(() -> gamepad1.left_trigger > 0.5);
-    Button gamepad1B = button(() -> gamepad1.circle);
     Button gamepad1X = button(() -> gamepad1.cross);
-    Button gamepad1Tri = button(()->gamepad1.triangle);
+    Button gamepad1Tri = button(() -> gamepad1.triangle);
+    Button gamepad1Square = button(() -> gamepad1.square);
+    Button gamepad1Circle = button(() -> gamepad1.circle);
+    Button loadedButton;
+
 
     Range leftStickY = range(() -> -gamepad1.left_stick_y).deadZone(Constants.controllerDeadband);
     Range leftStickX = range(() -> -gamepad1.left_stick_x).deadZone(Constants.controllerDeadband);
     Range rightStickX = range(() -> -gamepad1.right_stick_x).deadZone(Constants.controllerDeadband);
-
 
 
     Follower follower;
@@ -82,16 +86,18 @@ public class FtcTeleOp extends NextFTCOpMode {
                 .build();
 
         aimGoalPID = new AimGoalPID(visionLL, follower);
-
+        loadedColorSensor = hardwareMap.get(NormalizedColorSensor.class, "loadedSensor");
+        loadedDistSensor = (OpticalDistanceSensor) loadedColorSensor;
+        Indicators.INSTANCE.setIndicators(Indicators.indicatorStates.preMatch);
         configureBindings();
     }
 
     private void configureBindings() {
         // Follow sample automated path on A button
-        gamepad1a.whenBecomesTrue(() -> {
-            new FollowPath(pathChain.get());
-            automatedDrive = true;
-        });
+//        gamepad1a.whenBecomesTrue(() -> {
+//            new FollowPath(pathChain.get());
+//            automatedDrive = true;
+//        });
 
         // Toggle slow mode on right bumper
         gamepad1rightBumper.whenBecomesTrue(() -> {
@@ -101,20 +107,16 @@ public class FtcTeleOp extends NextFTCOpMode {
         // Toggle aim at goal when left bumper is pressed (this eventually will happen w/o driver input)
         gamepad1leftBumper.whenBecomesTrue(() -> aimAtGoal = !aimAtGoal);
 
-        // Cancel auto path when B is pressed
-        gamepad1B
-                .and(() -> !follower.isBusy())
-                .whenBecomesTrue(() -> {
-                    follower.startTeleopDrive();
-                    automatedDrive = false;
-                });
-        gamepad1X.whenBecomesTrue(()->{
-            Intake.INSTANCE.toggleIntakePower();
-            telemetry.speak("INTAKE");
-        });
-        gamepad1Tri.whenBecomesTrue(Shooter.INSTANCE::toggleShooterPower);
-        gamepad1RightTrigger.whenBecomesTrue(Shooter.INSTANCE::toggleGate);
-        gamepad1LeftTrigger.whenBecomesTrue(WarmupThenShoot.get());
+//        // Cancel auto path when B is pressed
+//        gamepad1B
+//                .and(() -> !follower.isBusy())
+//                .whenBecomesTrue(() -> {
+//                    follower.startTeleopDrive();
+//                    automatedDrive = false;
+//                });
+        gamepad1X.whenBecomesTrue(Intake.INSTANCE.toggleIntake);
+        gamepad1Tri.whenBecomesTrue(Shoot.get());
+        gamepad1RightTrigger.whenBecomesTrue(Shooter.INSTANCE.toggleGate);
     }
 
     @Override
@@ -125,6 +127,7 @@ public class FtcTeleOp extends NextFTCOpMode {
 
     @Override
     public void onUpdate() {
+        telemetryM.addData("Loaded Sensor Distance", ((OpticalDistanceSensor) loadedColorSensor).getLightDetected());
         //Call this once per loop
         telemetryM.update();
         follower.update();

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.tests;
 
 import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.startPose;
 import static org.firstinspires.ftc.teamcode.Constants.createFollower;
@@ -14,22 +14,19 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.teamcode.subsystems.Indicators;
+import org.firstinspires.ftc.teamcode.Constants;
+import org.firstinspires.ftc.teamcode.RobotState;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter;
-import org.firstinspires.ftc.teamcode.subsystems.Turret;
 import org.firstinspires.ftc.teamcode.subsystems.Vision;
-import org.firstinspires.ftc.teamcode.subsystems.VisionLL;
 import org.firstinspires.ftc.teamcode.utils.Paths;
 
 import dev.nextftc.core.components.SubsystemComponent;
-import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.ftc.NextFTCOpMode;
-import static dev.nextftc.extensions.pedro.PedroComponent.follower;
 
 
 @Autonomous(name = "Auto", group = "Primary")
-public class FtcAuto extends NextFTCOpMode {
+public class ExampleFtcAuto extends NextFTCOpMode {
     private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
     private Follower follower;
