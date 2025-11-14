@@ -27,12 +27,12 @@ public class Intake implements Subsystem {
     public Command intakeOn = new InstantCommand(()->{
         intakeMotor.setPower(intakeInverted ? -intakePower : intakePower);
         power = true;
-    });
+    }).requires(this);
     public Command intakeOff = new InstantCommand(()->{
         intakeMotor.setPower(0);
         power = false;
-    });
+    }).requires(this);
 
-    public Command toggleIntake = new IfElseCommand(()->power, intakeOff, intakeOn);
+    public Command toggleIntake = new IfElseCommand(()->power, intakeOff, intakeOn).requires(this);
 
 }
