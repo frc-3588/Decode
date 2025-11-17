@@ -1,9 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.ThermalEquilibrium.homeostasis.Parameters.FeedforwardCoefficients;
-import com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficients;
-import com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficientsEx;
 import com.bylazar.configurables.annotations.Configurable;
+import com.pedropathing.control.PIDFCoefficients;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.follower.FollowerConstants;
 import com.pedropathing.ftc.FollowerBuilder;
@@ -22,9 +20,18 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
+import dev.nextftc.control.feedback.PIDCoefficients;
+import dev.nextftc.control.feedforward.BasicFeedforward;
+import dev.nextftc.control.feedforward.BasicFeedforwardParameters;
+
 @Configurable
 public class Constants {
-    public static FollowerConstants followerConstants = new FollowerConstants();
+    public static FollowerConstants followerConstants = new FollowerConstants()
+            .mass(25)
+            .forwardZeroPowerAcceleration(-41.130076526156046)
+            .lateralZeroPowerAcceleration(-69.85431572316342)
+            .translationalPIDFCoefficients(new PIDFCoefficients(0.13,0,0.01,0.035))
+            .headingPIDFCoefficients(new PIDFCoefficients(1,0,0,0.02));
     public static final double controllerDeadband = 0.1;
     public static MecanumConstants driveConstants = new MecanumConstants()
             .maxPower(1)
@@ -35,7 +42,10 @@ public class Constants {
             .leftFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
             .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
             .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
-            .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD);
+            .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
+            .xVelocity(61.54)
+            .yVelocity(48)
+            ;
     public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);
 
 
@@ -44,23 +54,23 @@ public class Constants {
                 .pathConstraints(pathConstraints)
                 .mecanumDrivetrain(driveConstants)
                 .pinpointLocalizer(localizerConstants)
-//                .setLocalizer(new FusedAprilTagLocalizer(hardwareMap, localizerConstants, AutoConstants.startPose, visionPoseSupplier))
                 .build();
     }
 
 
     public static PinpointConstants localizerConstants = new PinpointConstants()
-            .forwardPodY(-1.812)
-            .strafePodX(-0.604)
+            .forwardPodY(0)
+            .strafePodX(0)
             .distanceUnit(DistanceUnit.INCH)
             .hardwareMapName("odo")
             .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)
-            .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
-            .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD);
+            .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED)
+            .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED)
+            ;
 
     @Configurable
     public static class IntakeConstants {
-        public final static double intakePower = 0.75;
+        public final static double intakePower = 0.8;
         public static final boolean intakeInverted = true;
         public static final String intakeMotor = "intake";
     }
@@ -83,15 +93,19 @@ public class Constants {
 
     @Configurable
     public static class ShooterConstants {
-        public static double gateInitPosition = 0.18;
-        public static double gateShootPosition = 0;
-        public static Servo.Direction gateDir = Servo.Direction.FORWARD;
+        public static double closeShootVelocity = 1200;
+        public static double mediumShootVelocity = 1300;
+
+        public static double longShootVelocity = 2000;
+
         public static double maxRange = 60; // inches
         public static double maxGoalAngle = 10; // degrees
         public static double loadedDetectorDebounceDelay = 2000; //ms
         public static double loadDetectionLightCutoff = 0.2;
-        public static PIDCoefficientsEx shooterPIDCoefficients = new PIDCoefficientsEx(0.25,0,0,0,0,0);
-        public static FeedforwardCoefficients feedForwardConstants = new FeedforwardCoefficients(0,0,0);
+
+
+        public static PIDCoefficients shooterPIDCoefficients = new PIDCoefficients(0.07,0,0.065);
+        public static BasicFeedforwardParameters shooterFeedForward = new BasicFeedforwardParameters(0.001, 0, 0.3);
     }
 
     @Configurable
@@ -103,6 +117,16 @@ public class Constants {
         public static Pose pickup3Pose = new Pose(41, 36, Math.toRadians(180)); // Lowest (Third Set) of Artifacts from the Spike Mark.
     }
 
-    public static PIDCoefficients aimGoalCoefficients = new PIDCoefficients(0, 0, 0);
+    public static com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficients aimGoalCoefficients = new com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficients(1, 0, 0);
     public static double aimGoalThresholdDegrees = 3.0;
+
+    @Configurable
+    public static class IndexingConstants {
+        public static double gateInitPosition = 0.3;
+        public static double gateShootPosition = 0;
+        public static double kickerInitPosition = 0.3;
+        public static double kickerKickPosition = 0;
+        public static Servo.Direction gateDir = Servo.Direction.FORWARD;
+        public static Servo.Direction kickerDir = Servo.Direction.REVERSE;
+    }
 }

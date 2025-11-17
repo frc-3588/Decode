@@ -17,7 +17,7 @@ public class AutoPoses {
     }
 
     public static class Blue12 {
-        public static final Pose startPose = new Pose(64, 8, Math.toRadians(90));
+        public static final Pose startPose = new Pose(64, 8, Math.toRadians(62.40));
         public static final Pose scoringClose = new Pose(56, 7, Math.toRadians(135));
         public static final Pose scoreFar = new Pose(56, 7, Math.toRadians(110));
         public static final Pose alignPPG = new Pose(41, 38, Math.toRadians(180));

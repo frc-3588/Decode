@@ -13,6 +13,7 @@ import dev.nextftc.hardware.impl.ServoEx;
 
 public class Intake implements Subsystem {
     MotorEx intakeMotor = new MotorEx("intake");
+
     boolean power = false;
     public static final Intake INSTANCE = new Intake() {};
 
@@ -22,17 +23,22 @@ public class Intake implements Subsystem {
 
     @Override
     public void initialize() {
-
     }
     public Command intakeOn = new InstantCommand(()->{
-        intakeMotor.setPower(intakeInverted ? -intakePower : intakePower);
+        intakeMotor.setPower(-intakePower);
         power = true;
-    }).requires(this);
+    });
     public Command intakeOff = new InstantCommand(()->{
         intakeMotor.setPower(0);
         power = false;
-    }).requires(this);
+    });
 
-    public Command toggleIntake = new IfElseCommand(()->power, intakeOff, intakeOn).requires(this);
+    public void toggleIntake(){
+        if (power){
+            INSTANCE.intakeOff.schedule();
+        } else {
+            INSTANCE.intakeOn.schedule();
+        }
+    }
 
 }
