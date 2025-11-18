@@ -13,8 +13,11 @@ import org.firstinspires.ftc.teamcode.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.subsystems.VisionLL;
 
 import dev.nextftc.core.commands.Command;
+import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.groups.ParallelGroup;
+import dev.nextftc.core.commands.groups.ParallelRaceGroup;
 import dev.nextftc.core.commands.groups.SequentialGroup;
+import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.extensions.pedro.FollowPath;
@@ -71,25 +74,27 @@ public class BlueGoalStart extends NextFTCOpMode {
 
     @Override
     public void onStartButtonPressed() {
-            PedroComponent.follower().setPose(new Pose(25, 130, Math.toRadians(140)));
-        Command auto = new SequentialGroup(
-                new ParallelGroup(
-                        Shooter.INSTANCE.shooterOnClose,
-                        new SequentialGroup(new FollowPath(one, true, 0.8),
-                                Intake.INSTANCE.intakeOn,
-                                Shoot.shoot3(),
-                                new FollowPath(two, true, 0.8),
-                                new FollowPath(three, true, 0.5),
-                                new FollowPath(four, true, 0.8),
-                                Shoot.shoot3(),
-                                new FollowPath(four, true, 0.8),
-                                Shooter.INSTANCE.shooterOff,
-                                new FollowPath(five, true, 0.8)
-                        )
+        PedroComponent.follower().setPose(new Pose(25, 130, Math.toRadians(140)));
+        Command auto =
+                new SequentialGroup(
+                        new ParallelRaceGroup(new ParallelGroup(
+                                Shooter.INSTANCE.shooterOnClose,
+                                new SequentialGroup(
+                                        new FollowPath(one, true, 0.8),
+                                        Intake.INSTANCE.intakeOn,
+                                        Shoot.shoot3Auto(),
+                                        new FollowPath(two, true, 0.8),
+                                        new FollowPath(three, true, 0.5),
+                                        new FollowPath(four, true, 0.8),
+                                        Shoot.shoot3Auto(),
+                                        new FollowPath(four, true, 0.8),
+                                        new FollowPath(five, true, 0.8)
+                                )
 
-                )
-
-        );
+                        ), new Delay(28)),
+                        Shooter.INSTANCE.shooterOff,
+                        new InstantCommand(PedroComponent.follower()::breakFollowing)
+                );
 
         auto.schedule();
     }

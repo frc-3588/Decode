@@ -83,7 +83,7 @@ public class Constants {
                 0, 0, 0, 0);
         public static String localizationWebCamName = "Webcam 1";
 
-        public static double VisionStalenessTimeout = 100; //milliseconds
+        public static double VisionStalenessTimeout = 300; //milliseconds
         public static double visionModelVariance = 0;
         public static double visionSensorVariance = 0;
         public static int visionPastSamples = 1;

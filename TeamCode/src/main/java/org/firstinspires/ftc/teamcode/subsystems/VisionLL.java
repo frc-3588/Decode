@@ -22,11 +22,11 @@ import org.firstinspires.ftc.teamcode.Constants;
 import java.util.List;
 
 import dev.nextftc.core.subsystems.Subsystem;
+import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.ftc.ActiveOpMode;
 
 public class VisionLL implements Subsystem {
     private Limelight3A limelight;
-    private IMU imu;
     private TelemetryManager telemetryManager;
     private LLResult currPose;
 
@@ -39,19 +39,13 @@ public class VisionLL implements Subsystem {
     @Override
     public void initialize() {
         limelight = ActiveOpMode.hardwareMap().get(Limelight3A.class, "limelight");
-        imu = ActiveOpMode.hardwareMap().get(IMU.class, "imu");
-        imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.LEFT)));
         limelight.pipelineSwitch(0);
         limelight.start();
     }
 
     @Override
     public void periodic() {
-        if (imu == null) {
-            return;
-        }
-        YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
-        limelight.updateRobotOrientation(orientation.getYaw(AngleUnit.DEGREES));
+        limelight.updateRobotOrientation(PedroComponent.gyro().get().inDeg);
         if (limelight == null){
             return;
         }

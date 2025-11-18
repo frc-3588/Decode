@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.bylazar.field.Style;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.geometry.BezierLine;
@@ -34,7 +35,12 @@ public class RedGoalStart extends NextFTCOpMode {
     TelemetryManager panelsTelemetry;
 
     public RedGoalStart() {
-        addComponents(new SubsystemComponent(Shooter.INSTANCE, Intake.INSTANCE, VisionLL.INSTANCE, Gate.INSTANCE, Kicker.INSTANCE), BulkReadComponent.INSTANCE, BindingsComponent.INSTANCE, new PedroComponent(Constants::createFollower));
+        addComponents(new SubsystemComponent(
+                Shooter.INSTANCE,
+                Intake.INSTANCE,
+                VisionLL.INSTANCE,
+                Gate.INSTANCE,
+                Kicker.INSTANCE), BulkReadComponent.INSTANCE, BindingsComponent.INSTANCE, new PedroComponent(Constants::createFollower));
     }
 
     @Override
@@ -55,7 +61,7 @@ public class RedGoalStart extends NextFTCOpMode {
         PedroComponent.follower().setPose(new Pose(116, 130, Math.toRadians(36)));
         Command auto =
                 new SequentialGroup(
-                        new ParallelGroup(
+                        new ParallelRaceGroup(new ParallelGroup(
                                 Shooter.INSTANCE.shooterOnClose,
                                 new SequentialGroup(
                                         new FollowPath(one, true, 0.8),
@@ -70,7 +76,10 @@ public class RedGoalStart extends NextFTCOpMode {
                                         new FollowPath(five, true, 0.8)
                                 )
 
-                        ));
+                        ), new Delay(28)),
+                        Shooter.INSTANCE.shooterOff,
+                        new InstantCommand(PedroComponent.follower()::breakFollowing)
+                        );
 
         auto.schedule();
     }
@@ -83,8 +92,12 @@ public class RedGoalStart extends NextFTCOpMode {
     @Override
     public void onUpdate() {
         PedroComponent.follower().update();
+        Drawing.drawDebug(PedroComponent.follower());
         if (panelsTelemetry != null) panelsTelemetry.update();
-
+        Pose llPose = VisionLL.INSTANCE.getCurrPose();
+        if (llPose != null){
+            PedroComponent.follower().setPose(llPose);
+        }
         Pose pose = PedroComponent.follower().getPose();
         double normH = Math.toDegrees((pose.getHeading() + 2 * Math.PI) % (2 * Math.PI));
 
