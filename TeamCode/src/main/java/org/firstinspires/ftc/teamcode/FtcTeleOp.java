@@ -29,6 +29,7 @@ import dev.nextftc.bindings.Button;
 import dev.nextftc.bindings.Range;
 import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.components.SubsystemComponent;
+import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.ftc.NextFTCOpMode;
 
 import static dev.nextftc.bindings.Bindings.button;
@@ -59,7 +60,6 @@ public class FtcTeleOp extends NextFTCOpMode {
     Range rightStickX = range(() -> -gamepad1.right_stick_x).deadZone(Constants.controllerDeadband);
 
 
-    Follower follower;
     AimGoalPID aimGoalPID;
 
 
@@ -71,18 +71,17 @@ public class FtcTeleOp extends NextFTCOpMode {
                 new SubsystemComponent(VisionLL.INSTANCE),
                 new SubsystemComponent(Kicker.INSTANCE),
                 new SubsystemComponent(Indicators.INSTANCE),
-                new SubsystemComponent(Gate.INSTANCE)
+                new SubsystemComponent(Gate.INSTANCE),
+                new PedroComponent(Constants::createFollower)
         );
-        follower = Constants.createFollower(hardwareMap);
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
         aimGoalPID = new AimGoalPID();
-        follower.setStartingPose(currentPose == null ? new Pose() : currentPose); // Take leftover pose from auto
-        follower.update();
+        PedroComponent.follower().update();
         Indicators.INSTANCE.setIndicators(Indicators.indicatorStates.preMatch);
 
-        pathChain = () -> follower.pathBuilder() //Lazy Curve Generation
-                .addPath(new Path(new BezierLine(follower::getPose, new Pose(45, 98))))
-                .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, Math.toRadians(45), 0.8))
+        pathChain = () -> PedroComponent.follower().pathBuilder() //Lazy Curve Generation
+                .addPath(new Path(new BezierLine(PedroComponent.follower()::getPose, new Pose(45, 98))))
+                .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(PedroComponent.follower()::getHeading, Math.toRadians(45), 0.8))
                 .build();
 
         configureBindings();
@@ -114,13 +113,14 @@ public class FtcTeleOp extends NextFTCOpMode {
         gamepad1Square.whenBecomesTrue(Shooter.INSTANCE.shooterOnMedium);
         gamepad1RightTrigger.whenBecomesTrue(Shoot.shoot1());
 //        gamepad1Circle.whenBecomesTrue(new InstantCommand(()->aimAtGoal = !aimAtGoal));
-        gamepad1Circle.whenBecomesTrue(new InstantCommand(()->follower.setPose(new Pose(0,0,0, PedroCoordinates.INSTANCE))));
+        gamepad1Circle.whenBecomesTrue(new InstantCommand(()->PedroComponent.follower().setPose(new Pose(0,0,0, PedroCoordinates.INSTANCE))));
         gamepad1LeftTrigger.whenBecomesTrue(Shoot.shoot3());
     }
 
     @Override
     public void onStartButtonPressed() {
-        follower.startTeleopDrive(true);
+        PedroComponent.follower().setStartingPose(currentPose == null ? new Pose() : currentPose); // Take leftover pose from auto
+        PedroComponent.follower().startTeleopDrive(true);
         Kicker.INSTANCE.onStart();
         Gate.INSTANCE.onStart();
         Shooter.INSTANCE.onStart();
@@ -131,7 +131,7 @@ public class FtcTeleOp extends NextFTCOpMode {
     public void onUpdate() {
         //Call this once per loop
         telemetryM.update();
-        follower.update();
+        PedroComponent.follower().update();
         BindingManager.update();
 
         if (!automatedDrive) {
@@ -160,12 +160,12 @@ public class FtcTeleOp extends NextFTCOpMode {
 //                        false // Robot Centric
 //            );
             if (aimAtGoal){
-                follower.setTeleOpDrive(leftStickY.get(),
+                PedroComponent.follower().setTeleOpDrive(leftStickY.get(),
                         leftStickX.get(),
                         aimGoalPID.calculate(),
                         true);
             } else {
-                follower.setTeleOpDrive(
+                PedroComponent.follower().setTeleOpDrive(
                         leftStickY.get(),
                         leftStickX.get(),
                         rightStickX.get(),
@@ -176,14 +176,14 @@ public class FtcTeleOp extends NextFTCOpMode {
         }
 
         //Stop automated following if the follower is done
-        if (automatedDrive && !follower.isBusy()) {
-            follower.startTeleopDrive();
+        if (automatedDrive && !PedroComponent.follower().isBusy()) {
+            PedroComponent.follower().startTeleopDrive();
             automatedDrive = false;
         }
 
 
-        telemetryM.debug("position", follower.getPose());
-        telemetryM.debug("velocity", follower.getVelocity());
+        telemetryM.debug("position", PedroComponent.follower().getPose());
+        telemetryM.debug("velocity", PedroComponent.follower().getVelocity());
         telemetryM.debug("automatedDrive", automatedDrive);
     }
 
