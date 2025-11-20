@@ -35,12 +35,18 @@ public class RedGoalStart extends NextFTCOpMode {
     TelemetryManager panelsTelemetry;
 
     public RedGoalStart() {
-        addComponents(new SubsystemComponent(
-                Shooter.INSTANCE,
-                Intake.INSTANCE,
-                VisionLL.INSTANCE,
-                Gate.INSTANCE,
-                Kicker.INSTANCE), BulkReadComponent.INSTANCE, BindingsComponent.INSTANCE, new PedroComponent(Constants::createFollower));
+        addComponents(
+                new SubsystemComponent(
+                        Shooter.INSTANCE,
+                        Intake.INSTANCE,
+                        VisionLL.INSTANCE,
+                        Gate.INSTANCE,
+                        Kicker.INSTANCE
+                ),
+                BulkReadComponent.INSTANCE,
+                BindingsComponent.INSTANCE,
+                new PedroComponent(Constants::createFollower)
+        );
     }
 
     @Override
@@ -79,7 +85,7 @@ public class RedGoalStart extends NextFTCOpMode {
                         ), new Delay(28)),
                         Shooter.INSTANCE.shooterOff,
                         new InstantCommand(PedroComponent.follower()::breakFollowing)
-                        );
+                );
 
         auto.schedule();
     }
@@ -95,7 +101,7 @@ public class RedGoalStart extends NextFTCOpMode {
         Drawing.drawDebug(PedroComponent.follower());
         if (panelsTelemetry != null) panelsTelemetry.update();
         Pose llPose = VisionLL.INSTANCE.getCurrPose();
-        if (llPose != null){
+        if (llPose != null) {
             PedroComponent.follower().setPose(llPose);
         }
         Pose pose = PedroComponent.follower().getPose();

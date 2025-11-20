@@ -12,7 +12,7 @@ public class AimGoalPID {
     AngleController controller = new AngleController(pid);
 
     public double calculate(){
-        LLResultTypes.FiducialResult tag =  VisionLL.INSTANCE.getTag(24);
+        LLResultTypes.FiducialResult tag =  VisionLL.INSTANCE.getTag(20);
         if (tag!= null){
             return controller.calculate(0,tag.getTargetXDegrees());
         }

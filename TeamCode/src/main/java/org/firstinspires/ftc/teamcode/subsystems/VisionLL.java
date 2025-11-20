@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.ftc.FTCCoordinates;
+import com.pedropathing.ftc.InvertedFTCCoordinates;
 import com.pedropathing.geometry.PedroCoordinates;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.bosch.BHI260IMU;
@@ -15,7 +16,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.Constants;
 
@@ -45,31 +48,39 @@ public class VisionLL implements Subsystem {
 
     @Override
     public void periodic() {
-        limelight.updateRobotOrientation(PedroComponent.gyro().get().inDeg);
         if (limelight == null){
             return;
         }
         LLResult result = limelight.getLatestResult();
         if (result != null) {
             if (result.isValid()) {
-                Pose3D botpose = result.getBotpose_MT2();
+                Pose3D botpose = result.getBotpose();
+                Position poseInches = botpose.getPosition().toUnit(DistanceUnit.INCH);
                 currPose = result;
-                double x = botpose.getPosition().x;
-                double y = botpose.getPosition().y;
-                telemetryManager.addData("MT2 Location:", "(" + x + ", " + y + ")");
+                Pose posePedro = new Pose(poseInches.x + 72,
+                        poseInches.y + 72,
+                        (botpose.getOrientation().getYaw(AngleUnit.RADIANS) + 2 * Math.PI) % (2 * Math.PI));
+
+                double x = posePedro.getX();
+                double y = posePedro.getY();
+                double theta = posePedro.getHeading();
+                telemetryManager.addData("MT1 Location Pedro:", "(" + x + ", " + y + ") theta: " + Math.toDegrees(theta));
             }
         }
     }
 
+    /**
+     * @return Current Pose in Pedro Coordinates
+     */
     public Pose getCurrPose() {
         // This needs to get improved, but it works for now
-        if (currPose.getStaleness() < Constants.VisionConstants.VisionStalenessTimeout) {
-            Pose3D llPosition = currPose.getBotpose_MT2();
-            return new Pose(llPosition.getPosition().x,
-                    llPosition.getPosition().y,
-                    llPosition.getOrientation().getYaw(),
-                    FTCCoordinates.INSTANCE)
-                    .getAsCoordinateSystem(PedroCoordinates.INSTANCE);
+        if (currPose != null && currPose.getStaleness() < Constants.VisionConstants.VisionStalenessTimeout) {
+            telemetryManager.debug("SETTING POSE VIA LIMELIGHT!");
+            Pose3D llPosition = currPose.getBotpose();
+            Position llPoseInches = llPosition.getPosition().toUnit(DistanceUnit.INCH);
+            return new Pose(llPoseInches.x + 72,
+                    llPoseInches.y + 72,
+                    (llPosition.getOrientation().getYaw(AngleUnit.RADIANS) + 2 * Math.PI) % (2 * Math.PI));
         } else {
             return null;
         }

@@ -48,7 +48,7 @@ public class FtcTeleOp extends NextFTCOpMode {
     Button gamepad1leftBumper = button(() -> gamepad1.left_bumper);
     Button gamepad1RightTrigger = button(() -> gamepad1.right_trigger > 0.5);
     Button gamepad1LeftTrigger = button(() -> gamepad1.left_trigger > 0.5);
-    Button gamepad1Dpad = button(()->gamepad1.dpad_up);
+    Button gamepad1Dpad = button(() -> gamepad1.dpad_up);
     Button gamepad1X = button(() -> gamepad1.cross);
     Button gamepad1Tri = button(() -> gamepad1.triangle);
     Button gamepad1Square = button(() -> gamepad1.square);
@@ -62,18 +62,19 @@ public class FtcTeleOp extends NextFTCOpMode {
 
     AimGoalPID aimGoalPID;
 
-
-    @Override
-    public void onInit() {
+    public FtcTeleOp(){
         addComponents(
-                new SubsystemComponent(Intake.INSTANCE),
-                new SubsystemComponent(Shooter.INSTANCE),
-                new SubsystemComponent(VisionLL.INSTANCE),
-                new SubsystemComponent(Kicker.INSTANCE),
-                new SubsystemComponent(Indicators.INSTANCE),
-                new SubsystemComponent(Gate.INSTANCE),
+                new SubsystemComponent(Intake.INSTANCE,
+                        Shooter.INSTANCE,
+                        VisionLL.INSTANCE,
+                        Kicker.INSTANCE,
+                        Indicators.INSTANCE,
+                        Gate.INSTANCE),
                 new PedroComponent(Constants::createFollower)
         );
+    }
+    @Override
+    public void onInit() {
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
         aimGoalPID = new AimGoalPID();
         PedroComponent.follower().update();
@@ -112,8 +113,8 @@ public class FtcTeleOp extends NextFTCOpMode {
         gamepad1Dpad.whenBecomesTrue(Shooter.INSTANCE.shooterOnFar);
         gamepad1Square.whenBecomesTrue(Shooter.INSTANCE.shooterOnMedium);
         gamepad1RightTrigger.whenBecomesTrue(Shoot.shoot1());
-//        gamepad1Circle.whenBecomesTrue(new InstantCommand(()->aimAtGoal = !aimAtGoal));
-        gamepad1Circle.whenBecomesTrue(new InstantCommand(()->PedroComponent.follower().setPose(new Pose(0,0,0, PedroCoordinates.INSTANCE))));
+        gamepad1Circle.whenBecomesTrue(new InstantCommand(()->aimAtGoal = !aimAtGoal));
+//        gamepad1Circle.whenBecomesTrue(new InstantCommand(() -> PedroComponent.follower().setPose(new Pose(0, 0, 0, PedroCoordinates.INSTANCE))));
         gamepad1LeftTrigger.whenBecomesTrue(Shoot.shoot3());
     }
 
@@ -159,7 +160,7 @@ public class FtcTeleOp extends NextFTCOpMode {
 //                    -gamepad1.right_stick_x * slowModeMultiplier,
 //                        false // Robot Centric
 //            );
-            if (aimAtGoal){
+            if (aimAtGoal) {
                 PedroComponent.follower().setTeleOpDrive(leftStickY.get(),
                         leftStickX.get(),
                         aimGoalPID.calculate(),

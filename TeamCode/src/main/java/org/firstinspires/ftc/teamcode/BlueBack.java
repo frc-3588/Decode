@@ -28,6 +28,7 @@ import dev.nextftc.ftc.components.BulkReadComponent;
 public class BlueBack extends NextFTCOpMode {
     PathChain one, two;
     TelemetryManager panelsTelemetry;
+
     public BlueBack() {
         addComponents(
                 new SubsystemComponent(Shooter.INSTANCE,
@@ -41,35 +42,37 @@ public class BlueBack extends NextFTCOpMode {
     }
 
     @Override
-    public void onInit (){
+    public void onInit() {
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
         one = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierLine(new Pose(60,11, Math.toRadians(135)), new Pose(60, 16, Math.toRadians(135))))
+                .addPath(new BezierLine(new Pose(60, 11, Math.toRadians(135)), new Pose(60, 16, Math.toRadians(135))))
                 .setConstantHeadingInterpolation(Math.toRadians(135))
                 .build();
     }
 
     @Override
-    public void onStartButtonPressed(){
-        PedroComponent.follower().setPose(new Pose(60,11, Math.toRadians(135)));
+    public void onStartButtonPressed() {
+        PedroComponent.follower().setPose(new Pose(60, 11, Math.toRadians(135)));
         Command auto = new SequentialGroup(
-                new ParallelGroup(new InstantCommand(Shooter.INSTANCE.shooterOnFar),
-                        new SequentialGroup(new Delay(2),
+                new ParallelGroup(
+                        new InstantCommand(Shooter.INSTANCE.shooterOnFar),
+                        new SequentialGroup(
+                                new Delay(2),
                                 Shoot.shoot3(),
                                 new FollowPath(one, true, 0.8)
-                                ))
-
-
+                        ))
         );
 
         auto.schedule();
     }
+
     private void log(String caption, Object value) {
         telemetry.addData(caption, value);
         if (panelsTelemetry != null) panelsTelemetry.debug(caption + ": " + value);
     }
+
     @Override
-    public void onUpdate(){
+    public void onUpdate() {
         PedroComponent.follower().update();
         if (panelsTelemetry != null) panelsTelemetry.update();
 

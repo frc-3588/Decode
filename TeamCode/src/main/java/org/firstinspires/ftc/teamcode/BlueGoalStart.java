@@ -27,12 +27,13 @@ import dev.nextftc.ftc.components.BulkReadComponent;
 
 @Autonomous
 public class BlueGoalStart extends NextFTCOpMode {
-    PathChain one, two, three, four, five, six;
+    PathChain one, two, three, four, five, six, seven, eight;
     TelemetryManager panelsTelemetry;
 
     public BlueGoalStart() {
         addComponents(
-                new SubsystemComponent(Shooter.INSTANCE,
+                new SubsystemComponent(
+                        Shooter.INSTANCE,
                         Intake.INSTANCE,
                         VisionLL.INSTANCE
                 ),
@@ -48,11 +49,11 @@ public class BlueGoalStart extends NextFTCOpMode {
         one = PedroComponent.follower().pathBuilder()
                 .addPath(new BezierLine(new Pose(25, 130), new Pose(45, 107)))
                 .setLinearHeadingInterpolation(Math.
-                        toRadians(140), Math.toRadians(139))
+                        toRadians(130), Math.toRadians(130))
                 .build();
         two = PedroComponent.follower().pathBuilder()
                 .addPath(new BezierLine(new Pose(45, 107), new Pose(52, 86)))
-                .setLinearHeadingInterpolation(Math.toRadians(139), Math.toRadians(180))
+                .setLinearHeadingInterpolation(Math.toRadians(130), Math.toRadians(180))
                 .build();
         three = PedroComponent.follower().pathBuilder()
                 .addPath(new BezierLine(new Pose(52, 86), new Pose(20, 86)))
@@ -67,14 +68,19 @@ public class BlueGoalStart extends NextFTCOpMode {
                 .setLinearHeadingInterpolation(Math.toRadians(140), Math.toRadians(180))
                 .build();
         six = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierLine(new Pose(52, 60), new Pose(45, 60)))
+                .addPath(new BezierLine(new Pose(52, 60), new Pose(20, 60)))
                 .setConstantHeadingInterpolation(Math.toDegrees(180))
                 .build();
+        seven = PedroComponent.follower().pathBuilder()
+                .addPath(new BezierLine(new Pose(20, 60), new Pose(45,107)))
+                .setLinearHeadingInterpolation(Math.toDegrees(140), Math.toDegrees(180))
+                .build();
+
     }
 
     @Override
     public void onStartButtonPressed() {
-        PedroComponent.follower().setPose(new Pose(25, 130, Math.toRadians(140)));
+        PedroComponent.follower().setPose(new Pose(25, 130, Math.toRadians(130)));
         Command auto =
                 new SequentialGroup(
                         new ParallelRaceGroup(new ParallelGroup(
@@ -82,6 +88,7 @@ public class BlueGoalStart extends NextFTCOpMode {
                                 new SequentialGroup(
                                         new FollowPath(one, true, 0.8),
                                         Intake.INSTANCE.intakeOn,
+                                        new InstantCommand(this::visionUpdatePose),
                                         Shoot.shoot3Auto(),
                                         new FollowPath(two, true, 0.8),
                                         new FollowPath(three, true, 0.5),
@@ -95,7 +102,6 @@ public class BlueGoalStart extends NextFTCOpMode {
                         Shooter.INSTANCE.shooterOff,
                         new InstantCommand(PedroComponent.follower()::breakFollowing)
                 );
-
         auto.schedule();
     }
 
@@ -110,6 +116,7 @@ public class BlueGoalStart extends NextFTCOpMode {
         if (panelsTelemetry != null) panelsTelemetry.update();
 
         Pose pose = PedroComponent.follower().getPose();
+
         double normH = Math.toDegrees((pose.getHeading() + 2 * Math.PI) % (2 * Math.PI));
 
         log("X", String.format("%.2f", pose.getX()));
@@ -117,5 +124,12 @@ public class BlueGoalStart extends NextFTCOpMode {
         log("Heading", String.format("%.2f°", normH));
 
         telemetry.update();
+    }
+
+    public void visionUpdatePose(){
+        Pose llPose = VisionLL.INSTANCE.getCurrPose();
+        if (llPose != null){
+            PedroComponent.follower().setPose(llPose);
+        }
     }
 }
