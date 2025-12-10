@@ -57,15 +57,26 @@ public class VisionLL implements Subsystem {
                 Pose3D botpose = result.getBotpose();
                 Position poseInches = botpose.getPosition().toUnit(DistanceUnit.INCH);
                 currPose = result;
-                Pose posePedro = new Pose(poseInches.x + 72,
-                        poseInches.y + 72,
-                        (botpose.getOrientation().getYaw(AngleUnit.RADIANS) + 2 * Math.PI) % (2 * Math.PI));
-
+                Pose posePedro = new Pose(poseInches.x + 72,poseInches.y + 72, Math.abs(botpose.getOrientation().getYaw(AngleUnit.RADIANS)));
                 double x = posePedro.getX();
                 double y = posePedro.getY();
                 double theta = posePedro.getHeading();
-                telemetryManager.addData("MT1 Location Pedro:", "(" + x + ", " + y + ") theta: " + Math.toDegrees(theta));
+                telemetryManager.addData("MT1 Location Pedro:", "("
+                        + x + ", " + y + ") theta: " + Math.toDegrees(theta));
             }
+        }
+        LLResultTypes.FiducialResult blueTag = VisionLL.INSTANCE.getTag(20);
+        LLResultTypes.FiducialResult redTag = VisionLL.INSTANCE.getTag(24);
+
+        double llDist = 0;
+
+        if (blueTag != null){
+            llDist = blueTag.getTargetPoseCameraSpace().getPosition().z;
+            telemetryManager.addData("LL Dist", llDist);
+
+        } else if (redTag != null){
+            llDist = redTag.getTargetPoseCameraSpace().getPosition().z;
+            telemetryManager.addData("LL Dist", llDist);
         }
     }
 

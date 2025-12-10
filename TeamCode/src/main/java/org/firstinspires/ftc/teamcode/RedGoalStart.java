@@ -11,7 +11,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.teamcode.commands.Shoot;
 import org.firstinspires.ftc.teamcode.subsystems.Gate;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
-import org.firstinspires.ftc.teamcode.subsystems.Kicker;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.subsystems.VisionLL;
 
@@ -31,7 +30,7 @@ import dev.nextftc.ftc.components.BulkReadComponent;
 
 @Autonomous(name = "Red Goal Start", preselectTeleOp = "FtcTeleOp")
 public class RedGoalStart extends NextFTCOpMode {
-    PathChain one, two, three, four, five, six;
+    PathChain one, two, three, four, five, six, seven, eight;
     TelemetryManager panelsTelemetry;
 
     public RedGoalStart() {
@@ -40,8 +39,7 @@ public class RedGoalStart extends NextFTCOpMode {
                         Shooter.INSTANCE,
                         Intake.INSTANCE,
                         VisionLL.INSTANCE,
-                        Gate.INSTANCE,
-                        Kicker.INSTANCE
+                        Gate.INSTANCE
                 ),
                 BulkReadComponent.INSTANCE,
                 BindingsComponent.INSTANCE,
@@ -52,34 +50,57 @@ public class RedGoalStart extends NextFTCOpMode {
     @Override
     public void onInit() {
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
-        one = PedroComponent.follower().pathBuilder().addPath(new BezierLine(new Pose(116, 130), new Pose(88, 107))).setLinearHeadingInterpolation(Math.toRadians(36), Math.toRadians(36)).build();
-        two = PedroComponent.follower().pathBuilder().addPath(new BezierLine(new Pose(92, 107), new Pose(92, 86))).setLinearHeadingInterpolation(Math.toRadians(40), Math.toRadians(0)).build();
+        one = PedroComponent.follower().pathBuilder().addPath(new BezierLine(new Pose(116, 130), new Pose(92, 97))).setLinearHeadingInterpolation(Math.toRadians(44), Math.toRadians(44)).build();
+        two = PedroComponent.follower().pathBuilder().addPath(new BezierLine(new Pose(92, 97), new Pose(92, 86))).setLinearHeadingInterpolation(Math.toRadians(44), Math.toRadians(0)).build();
         three = PedroComponent.follower().pathBuilder().addPath(new BezierLine(new Pose(92, 86), new Pose(120, 86))).setConstantHeadingInterpolation(Math.toDegrees(0)).build();
-        four = PedroComponent.follower().pathBuilder().addPath(new BezierLine(new Pose(123, 86), new Pose(88, 107))).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(40)).build();
-        five = PedroComponent.follower().pathBuilder().addPath(new BezierLine(new Pose(88, 107), new Pose(92, 60))).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(40)).build();
-        six = PedroComponent.follower().pathBuilder().addPath(new BezierLine(new Pose(92, 60), new Pose(120, 60))).setConstantHeadingInterpolation(Math.toDegrees(0)).build();
+        four = PedroComponent.follower().pathBuilder().addPath(new BezierLine(new Pose(120, 86), new Pose(88, 107))).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(44)).build();
+        five = PedroComponent.follower().pathBuilder().addPath(new BezierLine(new Pose(88, 107), new Pose(92, 65))).setLinearHeadingInterpolation(Math.toRadians(44), Math.toRadians(0)).build();
+        six = PedroComponent.follower().pathBuilder().addPath(new BezierLine(new Pose(92, 65), new Pose(120, 65))).setConstantHeadingInterpolation(Math.toRadians(0)).build();
+        seven = PedroComponent.follower().pathBuilder().addPath(new BezierLine(new Pose(120, 65), new Pose(92, 97))).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(44)).build();
+        eight = PedroComponent.follower().pathBuilder().addPath(new BezierLine(new Pose(92, 97), new Pose(92, 75))).setLinearHeadingInterpolation(Math.toRadians(44), Math.toRadians(0)).build();
+
     }
 
     @Override
     public void onStartButtonPressed() {
-        Gate.INSTANCE.onStart();
-        Kicker.INSTANCE.onStart();
-        PedroComponent.follower().setPose(new Pose(116, 130, Math.toRadians(36)));
+        PedroComponent.follower().setPose(new Pose(116, 130, Math.toRadians(44)));
         Command auto =
                 new SequentialGroup(
                         new ParallelRaceGroup(new ParallelGroup(
                                 Shooter.INSTANCE.shooterOnClose,
                                 new SequentialGroup(
+                                        Gate.INSTANCE.gateToOpenPos,
                                         new FollowPath(one, true, 0.8),
-                                        Intake.INSTANCE.intakeOn,
+                                        new Delay(2),
+                                        Intake.INSTANCE.intakeOff,
                                         Shoot.shoot3Auto(),
-                                        Shoot.shoot1(),
-                                        new FollowPath(two, true, 0.8),
-                                        new FollowPath(three, true, 0.5),
-                                        new FollowPath(four, true, 0.8),
+                                        new FollowPath(two, true, 1.0),
+                                        new FollowPath(three, true, .90),
+                                        new Delay(0.5),
+                                        new ParallelGroup(
+                                                new FollowPath(four, true, 1.0),
+                                                new SequentialGroup(
+                                                        new Delay(0.2),
+                                                        Intake.INSTANCE.intakeOff,
+                                                        new Delay(0.2),
+                                                        Intake.INSTANCE.intakeOn
+                                                )
+                                        ),
                                         Shoot.shoot3Auto(),
-                                        new FollowPath(four, true, 0.8),
-                                        new FollowPath(five, true, 0.8)
+                                        new FollowPath(four, true, 1.0),
+                                        new FollowPath(five, true, 1.0),
+                                        new FollowPath(six, true, .6),
+                                        new ParallelGroup(
+                                                new FollowPath(seven, true, 1.0),
+                                                new SequentialGroup(
+                                                        new Delay(0.2),
+                                                        Intake.INSTANCE.intakeOff,
+                                                        new Delay(0.2),
+                                                        Intake.INSTANCE.intakeOn
+                                                )
+                                        ),
+                                        Shoot.shoot3Auto(),
+                                        new FollowPath(eight, true, 1.0)
                                 )
 
                         ), new Delay(28)),
@@ -102,7 +123,7 @@ public class RedGoalStart extends NextFTCOpMode {
         if (panelsTelemetry != null) panelsTelemetry.update();
         Pose llPose = VisionLL.INSTANCE.getCurrPose();
         if (llPose != null) {
-            PedroComponent.follower().setPose(llPose);
+//            PedroComponent.follower().setPose(llPose);
         }
         Pose pose = PedroComponent.follower().getPose();
         double normH = Math.toDegrees((pose.getHeading() + 2 * Math.PI) % (2 * Math.PI));

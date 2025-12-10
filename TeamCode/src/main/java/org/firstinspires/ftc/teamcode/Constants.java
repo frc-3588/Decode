@@ -14,14 +14,12 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.Supplier;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 import dev.nextftc.control.feedback.PIDCoefficients;
-import dev.nextftc.control.feedforward.BasicFeedforward;
 import dev.nextftc.control.feedforward.BasicFeedforwardParameters;
 
 @Configurable
@@ -93,19 +91,24 @@ public class Constants {
 
     @Configurable
     public static class ShooterConstants {
-        public static double closeShootVelocity = 1200;
-        public static double mediumShootVelocity = 1300;
+        public static double closeShootVelocity = 1025;
+        public static double mediumShootVelocity = 1100;
+        public static double longShootVelocity = 1350;
 
-        public static double longShootVelocity = 2000;
-
-        public static double maxRange = 60; // inches
-        public static double maxGoalAngle = 10; // degrees
-        public static double loadedDetectorDebounceDelay = 2000; //ms
-        public static double loadDetectionLightCutoff = 0.2;
+        public static double shooterInterpolationYIntercept = 850.36;
+        public static double shooterInterpolationSlope = 160.49;
 
 
-        public static PIDCoefficients shooterPIDCoefficients = new PIDCoefficients(0.07,0,0.065);
-        public static BasicFeedforwardParameters shooterFeedForward = new BasicFeedforwardParameters(0.001, 0, 0.3);
+        public static PIDCoefficients shooterPIDCoefficients = new PIDCoefficients(0.08,0,0);
+        public static BasicFeedforwardParameters shooterFeedForward = new BasicFeedforwardParameters(0.0013, 0, 0.18);
+    }
+
+    @Configurable
+    public static class AutoAimConstants {
+        public static double blueOffset = -5;
+        public static double redOffset = -5;
+        public static com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficients aimGoalCoefficients = new com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficients(0.013, 0, 0.005);
+
     }
 
     @Configurable
@@ -117,15 +120,13 @@ public class Constants {
         public static Pose pickup3Pose = new Pose(41, 36, Math.toRadians(180)); // Lowest (Third Set) of Artifacts from the Spike Mark.
     }
 
-    public static com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficients aimGoalCoefficients = new com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficients(1, 0, 0);
-    public static double aimGoalThresholdDegrees = 3.0;
 
     @Configurable
     public static class IndexingConstants {
         public static double gateInitPosition = 0.3;
         public static double gateShootPosition = 0;
-        public static double kickerInitPosition = 0.3;
-        public static double kickerKickPosition = 0;
+        public static double kickerSpeed = 1;
+//        public static double kickerKickPosition = 0;
         public static Servo.Direction gateDir = Servo.Direction.FORWARD;
         public static Servo.Direction kickerDir = Servo.Direction.REVERSE;
     }

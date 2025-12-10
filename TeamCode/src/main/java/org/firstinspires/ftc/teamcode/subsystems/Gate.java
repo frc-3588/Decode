@@ -40,7 +40,6 @@ public class Gate implements Subsystem {
         }
     }
     public void onStart() {
-        gate.setPosition(Constants.IndexingConstants.gateInitPosition);
     }
 
     public Command gateToFirePos =
