@@ -24,7 +24,7 @@ import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
 
-@Autonomous(name = "Simple Auto")
+@Autonomous(name = "Blue Back", preselectTeleOp = "FtcTeleOp")
 public class BlueBack extends NextFTCOpMode {
     PathChain one, two;
     TelemetryManager panelsTelemetry;
@@ -45,7 +45,7 @@ public class BlueBack extends NextFTCOpMode {
     public void onInit() {
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
         one = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierLine(new Pose(60, 11, Math.toRadians(135)), new Pose(60, 16, Math.toRadians(135))))
+                .addPath(new BezierLine(new Pose(60, 11, Math.toRadians(135)), new Pose(60, 16, Math.toRadians(90))))
                 .setConstantHeadingInterpolation(Math.toRadians(135))
                 .build();
     }

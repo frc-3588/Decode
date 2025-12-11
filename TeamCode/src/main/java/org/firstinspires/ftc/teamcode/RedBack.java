@@ -6,7 +6,6 @@ import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.commands.Shoot;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
@@ -25,11 +24,12 @@ import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
 
-@Autonomous(name = "Simple Auto")
-public class SimpleAuto extends NextFTCOpMode {
+@Autonomous(name = "Red Back", preselectTeleOp = "FtcTeleOp")
+public class RedBack extends NextFTCOpMode {
     PathChain one, two;
     TelemetryManager panelsTelemetry;
-    public SimpleAuto() {
+
+    public RedBack() {
         addComponents(
                 new SubsystemComponent(Shooter.INSTANCE,
                         Intake.INSTANCE,
@@ -42,41 +42,37 @@ public class SimpleAuto extends NextFTCOpMode {
     }
 
     @Override
-    public void onInit (){
+    public void onInit() {
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
         one = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierLine(new Pose(86,11, Math.toRadians(42)), new Pose(102, 30, Math.toRadians(-10))))
-                .setLinearHeadingInterpolation(Math.toRadians(42),  Math.toRadians(-10))
-                .build();
-        two = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierLine(PedroComponent.follower().getPose(), new Pose(135, 30, 0)))
-                .setLinearHeadingInterpolation(Math.toRadians(-10),  Math.toRadians(-10))
+                .addPath(new BezierLine(new Pose(60, 11, Math.toRadians(45)), new Pose(60, 16, Math.toRadians(90))))
+                .setConstantHeadingInterpolation(Math.toRadians(135))
                 .build();
     }
 
     @Override
-    public void onStartButtonPressed(){
-        PedroComponent.follower().setPose(new Pose(86,11, Math.toRadians(42)));
+    public void onStartButtonPressed() {
+        PedroComponent.follower().setPose(new Pose(60, 11, Math.toRadians(45)));
         Command auto = new SequentialGroup(
-                new ParallelGroup(new InstantCommand(Shooter.INSTANCE.shooterOnFar),
-                        new SequentialGroup(new Delay(2),
+                new ParallelGroup(
+                        new InstantCommand(Shooter.INSTANCE.shooterOnFar),
+                        new SequentialGroup(
+                                new Delay(2),
                                 Shoot.shoot3(),
-                                Intake.INSTANCE.intakeOn,
-                                new FollowPath(one, true, 0.8),
-                                new FollowPath(two, true, 0.8))
-                                )
-
-
+                                new FollowPath(one, true, 0.8)
+                        ))
         );
 
         auto.schedule();
     }
+
     private void log(String caption, Object value) {
         telemetry.addData(caption, value);
         if (panelsTelemetry != null) panelsTelemetry.debug(caption + ": " + value);
     }
+
     @Override
-    public void onUpdate(){
+    public void onUpdate() {
         PedroComponent.follower().update();
         if (panelsTelemetry != null) panelsTelemetry.update();
 

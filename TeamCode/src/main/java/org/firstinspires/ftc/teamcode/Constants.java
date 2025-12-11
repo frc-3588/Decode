@@ -68,7 +68,7 @@ public class Constants {
 
     @Configurable
     public static class IntakeConstants {
-        public final static double intakePower = 0.8;
+        public final static double intakePower = 0.8; // Modifiable
         public static final boolean intakeInverted = true;
         public static final String intakeMotor = "intake";
     }
@@ -91,12 +91,12 @@ public class Constants {
 
     @Configurable
     public static class ShooterConstants {
-        public static double closeShootVelocity = 1025;
-        public static double mediumShootVelocity = 1100;
-        public static double longShootVelocity = 1350;
+        public static double closeShootVelocity = 1025; // Modifiable (auto shoot speed)
+        public static double mediumShootVelocity = 1100; // Modifiable
+        public static double longShootVelocity = 1350; // Modifiable
 
-        public static double shooterInterpolationYIntercept = 850.36;
-        public static double shooterInterpolationSlope = 160.49;
+        public static double shooterInterpolationYIntercept = 850.36; // Modifiable
+        public static double shooterInterpolationSlope = 160.49; // Modifiable
 
 
         public static PIDCoefficients shooterPIDCoefficients = new PIDCoefficients(0.08,0,0);

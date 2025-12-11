@@ -26,12 +26,12 @@ import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
 
-@Autonomous(name = "Blue Goal Start", preselectTeleOp = "FtcTeleOp")
-public class BlueGoalStart extends NextFTCOpMode {
+@Autonomous(name = "Blue 6 Ball", preselectTeleOp = "FtcTeleOp")
+public class Blue6Ball extends NextFTCOpMode {
     PathChain one, two, three, four, five, six, seven, eight;
     TelemetryManager panelsTelemetry;
 
-    public BlueGoalStart() {
+    public Blue6Ball() {
         addComponents(
                 new SubsystemComponent(
                         Shooter.INSTANCE,
@@ -101,19 +101,6 @@ public class BlueGoalStart extends NextFTCOpMode {
                                         new Delay(0.5),
                                         new ParallelGroup(
                                                 new FollowPath(four, true, 1.0),
-                                                new SequentialGroup(
-                                                        new Delay(0.2),
-                                                        Intake.INSTANCE.intakeOff,
-                                                        new Delay(0.2),
-                                                        Intake.INSTANCE.intakeOn
-                                                )
-                                        ),
-                                        Shoot.shoot3Auto(),
-                                        // Start picking up balls 7-9                                        new FollowPath(four, true, 1.0),
-                                        new FollowPath(five, true, 1.0),
-                                        new FollowPath(six, true, .6),
-                                        new ParallelGroup(
-                                                new FollowPath(seven, true, 1.0),
                                                 new SequentialGroup(
                                                         new Delay(0.2),
                                                         Intake.INSTANCE.intakeOff,
